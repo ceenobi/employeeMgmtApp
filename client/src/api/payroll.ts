@@ -1,0 +1,60 @@
+import { PayrollFormData } from "@/emply-types";
+import axiosInstance from "@/utils/axiosInstance";
+
+export const getPayroll = async (payrollId: string, token: string) => {
+  return await axiosInstance.get(`/payrolls/${payrollId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getPayrolls = async (token: string) => {
+  return await axiosInstance.get(`/payrolls`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const createPayroll = async (
+  formData: PayrollFormData,
+  token: string
+) => {
+  return await axiosInstance.post("/payrolls/create", formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const updatePayrollStatus = async (
+  payrollId: string,
+  status: PayrollFormData,
+  token: string
+) => {
+  return await axiosInstance.patch(`/payrolls/${payrollId}/status`, status, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getLatestPayroll = async (
+  page: string | number,
+  token: string
+) => {
+  return await axiosInstance.get(`/payrolls/latest/get?page=${page}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const deletePayroll = async (payrollId: string, token: string) => {
+  return await axiosInstance.delete(`/payrolls/${payrollId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
