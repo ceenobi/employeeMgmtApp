@@ -273,7 +273,11 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
                 {selectedPayroll?.userId?.firstName as string}{" "}
                 {selectedPayroll?.userId?.lastName as string}
               </h1>
-              <Link to={`/payrolls/${selectedPayroll?._id}/edit`}>
+              <Link
+                to={`/payrolls/${selectedPayroll?._id}/edit`}
+                className="tooltip"
+                data-tip="Edit payroll"
+              >
                 <FilePenLine />
               </Link>
             </div>
@@ -305,7 +309,7 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
               <ul>
                 {Object.entries(selectedPayroll.allowances).map(
                   ([key, value]) => (
-                    <li key={key} className="text-sm">
+                    <li key={key} className="text-sm capitalize">
                       {key}: {formatCurrency(value)}
                     </li>
                   )

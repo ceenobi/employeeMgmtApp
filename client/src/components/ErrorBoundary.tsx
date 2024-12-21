@@ -1,7 +1,6 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import {
   isRouteErrorResponse,
-  useLocation,
   useNavigate,
   useRouteError,
 } from "react-router";
@@ -37,11 +36,11 @@ export default function ErrorBoundary() {
 
   console.log("Error message:", errorMessage);
 
-  useEffect(() => {
-    if (errorMessage === "Session expired, pls login ") {
-      navigate("/login");
-    }
-  }, [errorMessage, navigate]);
+  // useEffect(() => {
+  //   if (errorMessage === "Session expired, pls login ") {
+  //     navigate("/login");
+  //   }
+  // }, [errorMessage, navigate]);
 
   // const from = location.state?.from || "/";
   const redirect = () => {

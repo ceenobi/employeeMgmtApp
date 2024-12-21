@@ -2,32 +2,9 @@ import {
   createPayroll,
   deletePayroll,
   updatePayrollStatus,
+  updatePayroll,
 } from "@/api/payroll";
 import { PayrollFormData } from "@/emply-types";
-
-const parseAllowances = (input: string) => {
-  if (!input) return {};
-  const allowances: Record<string, number> = {};
-  input.split(",").forEach((item) => {
-    const [key, value] = item.split(":");
-    if (key && value) {
-      allowances[key.trim()] = parseFloat(value.trim());
-    }
-  });
-  return allowances;
-};
-
-const parseDeductions = (input: string) => {
-  if (!input) return {};
-  const deductions: Record<string, number> = {};
-  input.split(",").forEach((item) => {
-    const [key, value] = item.split(":");
-    if (key && value) {
-      deductions[key.trim()] = parseFloat(value.trim());
-    }
-  });
-  return deductions;
-};
 
 export const createPayrollAction = async (
   { request }: { request: Request },
@@ -35,14 +12,8 @@ export const createPayrollAction = async (
 ) => {
   const formData = await request.formData();
   const payroll = Object.fromEntries(formData);
-  const allowancesString = formData.get("allowances") as string;
-  const deductionsString = formData.get("deductions") as string;
-  const allowances = parseAllowances(allowancesString);
-  const deductions = parseDeductions(deductionsString);
   const payrollData = {
     ...payroll,
-    allowances,
-    deductions,
     payPeriod: {
       start: payroll.payPeriodStart as string,
       end: payroll.payPeriodEnd as string,
@@ -59,6 +30,92 @@ export const createPayrollAction = async (
     return { error };
   }
 };
+
+export const updatePayrollAction = async (
+  { request }: { request: Request },
+  token: string
+) => {
+  const formData = await request.formData();
+  const payroll = Object.fromEntries(formData);
+  const payrollId = payroll.id as string;
+  const payrollData = {
+    ...payroll,
+    payPeriod: {
+      start: payroll.payPeriodStart as string,
+      end: payroll.payPeriodEnd as string,
+    },
+  } as PayrollFormData;
+  try {
+    const res = await updatePayroll(payrollId, payrollData, token);
+    return {
+      status: res.status,
+      msg: res.data.msg,
+      payroll: res.data.payroll,
+    };
+  } catch (error) {
+    return { error };
+  }
+};
+
+export const handlePayrollStatusOrDeletePayrollAction = async (
+  {
+    request,
+  }: {
+    request: Request;
+  },
+  token: string
+) => {
+  const formData = await request.formData();
+  const { id } = Object.fromEntries(formData) as { id: string };
+  console.log(request.method);
+
+  try {
+    if (request.method === "DELETE") {
+      const res = await deletePayroll(id, token);
+      return {
+        status: res.status,
+        msg: res.data.msg,
+      };
+    }
+    if (request.method === "PATCH") {
+      const payroll = Object.fromEntries(formData);
+      const payrollData = payroll as unknown as PayrollFormData;
+      console.log(payrollData);
+      const res = await updatePayrollStatus(id, payrollData, token);
+      return {
+        status: res.status,
+        msg: res.data.msg,
+        updatedStatus: res.data.updatedStatus,
+      };
+    }
+  } catch (error) {
+    return { error };
+  }
+};
+
+// const parseAllowances = (input: string) => {
+//   if (!input) return {};
+//   const allowances: Record<string, number> = {};
+//   input.split(",").forEach((item) => {
+//     const [key, value] = item.split(":");
+//     if (key && value) {
+//       allowances[key.trim()] = parseFloat(value.trim());
+//     }
+//   });
+//   return allowances;
+// };
+
+// const parseDeductions = (input: string) => {
+//   if (!input) return {};
+//   const deductions: Record<string, number> = {};
+//   input.split(",").forEach((item) => {
+//     const [key, value] = item.split(":");
+//     if (key && value) {
+//       deductions[key.trim()] = parseFloat(value.trim());
+//     }
+//   });
+//   return deductions;
+// };
 
 // export const deletePayrollAction = async (
 //   { request }: { request: Request },
@@ -97,39 +154,3 @@ export const createPayrollAction = async (
 //     return { error };
 //   }
 // };
-
-export const handlePayrollStatusOrDeletePayrollAction = async (
-  {
-    request,
-  }: {
-    request: Request;
-  },
-  token: string
-) => {
-  const formData = await request.formData();
-  const { id } = Object.fromEntries(formData) as { id: string };
-  console.log(request.method);
-
-  try {
-    if (request.method === "DELETE") {
-      const res = await deletePayroll(id, token);
-      return {
-        status: res.status,
-        msg: res.data.msg,
-      };
-    }
-    if (request.method === "PATCH") {
-      const payroll = Object.fromEntries(formData);
-      const payrollData = payroll as unknown as PayrollFormData;
-      console.log(payrollData);
-      const res = await updatePayrollStatus(id, payrollData, token);
-      return {
-        status: res.status,
-        msg: res.data.msg,
-        updatedStatus: res.data.updatedStatus,
-      };
-    }
-  } catch (error) {
-    return { error };
-  }
-};

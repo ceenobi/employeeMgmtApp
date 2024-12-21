@@ -12,7 +12,6 @@ import { FieldValues, useForm } from "react-hook-form";
 import {
   ActionButton,
   Alert,
-  ErrorMsg,
   SelectField,
   TextField,
   UnAuthorized,
@@ -36,16 +35,7 @@ export function Component() {
   };
   const navigate = useNavigate();
   const data = useLoaderData() as {
-    employee: Userinfo;
-    error: {
-      status: string;
-      response: {
-        data: {
-          error: string;
-        };
-      };
-    };
-    status: number;
+    data: Userinfo;
   };
   const { depts } = useRouteLoaderData("departments-employees") as {
     depts: {
@@ -62,23 +52,21 @@ export function Component() {
   } = useForm();
   const fetcher = useFetcher();
   const isSubmitting = fetcher.state === "submitting";
+  const employee = data?.data;
 
   useEffect(() => {
-    if (data?.status === 200) {
-      setValue("firstName", data?.employee?.firstName);
-      setValue("lastName", data?.employee?.lastName);
-      setValue("email", data?.employee?.email);
-      setValue("phone", data?.employee?.phone);
-      setValue(
-        "dateOfBirth",
-        formatFullDate(data?.employee?.dateOfBirth as string)
-      );
-      setValue("dept", data?.employee?.dept);
-      setValue("jobType", data?.employee?.jobType);
-      setValue("jobTitle", data?.employee?.jobTitle);
-      setValue("role", data?.employee?.role);
+    if (employee) {
+      setValue("firstName", employee?.firstName);
+      setValue("lastName", employee?.lastName);
+      setValue("email", employee?.email);
+      setValue("phone", employee?.phone);
+      setValue("dateOfBirth", formatFullDate(employee?.dateOfBirth as string));
+      setValue("dept", employee?.dept);
+      setValue("jobType", employee?.jobType);
+      setValue("jobTitle", employee?.jobTitle);
+      setValue("role", employee?.role);
     }
-  }, [data?.employee, data?.status, setValue]);
+  }, [employee, setValue]);
 
   useEffect(() => {
     if (fetcher.data?.status === 200) {
@@ -106,7 +94,7 @@ export function Component() {
     fetcher.submit(
       {
         ...formData,
-        employeeId: data?.employee?.employeeId as string,
+        employeeId: employee?.employeeId as string,
       },
       { method: "patch" }
     );
@@ -115,141 +103,133 @@ export function Component() {
   return (
     <>
       <Helmet>
-        <title>{`Edit Employee ${data?.employee?.firstName} ${data?.employee?.lastName}`}</title>
+        <title>{`Edit Employee ${employee?.firstName} ${employee?.lastName}`}</title>
         <meta name="description" content="Edit employee details" />
       </Helmet>
-      <div>
+      <>
         {!authRole?.includes(user?.role) ? (
           <UnAuthorized />
         ) : (
           <>
-            {data?.error && <ErrorMsg error={data?.error} />}
-            {data?.status === 200 && (
-              <>
-                <h1 className="font-bold px-2">
-                  Edit{" "}
-                  {data?.employee?.firstName.concat(
-                    " ",
-                    data?.employee?.lastName
-                  )}
-                </h1>
-                <div className="mt-6 py-4 px-2">
-                  {error && <Alert error={error} />}
-                  <Form
-                    method="patch"
-                    action={`/employees/${data?.employee?.employeeId}`}
-                    onSubmit={handleSubmit(onFormSubmit)}
-                    className="flex flex-col min-h-[calc(100vh-200px)] justify-between"
-                  >
-                    <div className="grid md:grid-cols-3 gap-8">
-                      <div>
-                        {inputFields
-                          .filter((item) => formFields1.includes(item.name))
-                          .map(
-                            ({
-                              type,
-                              id,
-                              name,
-                              label,
-                              placeholder,
-                              validate,
-                              isRequired,
-                            }) => (
-                              <TextField
-                                type={type}
-                                id={id}
-                                name={name}
-                                register={register}
-                                label={label}
-                                placeholder={placeholder}
-                                key={id}
-                                errors={errors}
-                                validate={(value) =>
-                                  validate(value) || undefined
-                                }
-                                isRequired={isRequired}
-                              />
-                            )
-                          )}
-                      </div>
-                      <div>
-                        <SelectField
-                          label="Job Type"
-                          name="jobType"
-                          id="jobType"
-                          register={register}
-                          errors={errors}
-                          placeholder="Select job type"
-                          options={jobType}
-                          validate={(value) =>
-                            validateField(value, "Job type is required")
-                          }
-                          isRequired
-                        />
-                        <SelectField
-                          label="Job Title"
-                          name="jobTitle"
-                          id="jobTitle"
-                          register={register}
-                          errors={errors}
-                          placeholder="Select job title"
-                          options={jobTitle}
-                          validate={(value) =>
-                            validateField(value, "Job title is required")
-                          }
-                          isRequired
-                        />
-                        <SelectField
-                          label="Department"
-                          name="dept"
-                          id="dept"
-                          register={register}
-                          errors={errors}
-                          placeholder="Select department"
-                          options={depts?.departments}
-                          validate={(value) =>
-                            validateField(value, "Please select a department")
-                          }
-                          isRequired
-                        />
-                        <SelectField
-                          label="Role"
-                          name="role"
-                          id="role"
-                          register={register}
-                          errors={errors}
-                          placeholder="Select role"
-                          options={employeeRole}
-                          validate={(value) =>
-                            validateField(value, "Role is required")
-                          }
-                          isRequired
-                        />
-                      </div>
+            <>
+              <h1 className="font-bold px-2">
+                Edit employee{" "}
+                <span className="">
+                  {employee?.firstName.concat(" ", employee?.lastName)}
+                </span>
+              </h1>
+              <div className="mt-6 py-4 px-2">
+                {error && <Alert error={error} />}
+                <Form
+                  method="patch"
+                  action={`/employees/${employee?.employeeId}`}
+                  onSubmit={handleSubmit(onFormSubmit)}
+                  className="flex flex-col min-h-[calc(100vh-200px)] justify-between"
+                >
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div>
+                      {inputFields
+                        .filter((item) => formFields1.includes(item.name))
+                        .map(
+                          ({
+                            type,
+                            id,
+                            name,
+                            label,
+                            placeholder,
+                            validate,
+                            isRequired,
+                          }) => (
+                            <TextField
+                              type={type}
+                              id={id}
+                              name={name}
+                              register={register}
+                              label={label}
+                              placeholder={placeholder}
+                              key={id}
+                              errors={errors}
+                              validate={(value) => validate(value) || undefined}
+                              isRequired={isRequired}
+                            />
+                          )
+                        )}
                     </div>
-                    <div className="flex flex-col md:flex-row-reverse gap-6 items-center">
-                      <ActionButton
-                        type="submit"
-                        text="Update"
-                        classname="w-full md:w-[130px] bg-secondary btn-sm"
-                        loading={isSubmitting}
-                      />
-                      <ActionButton
-                        type="button"
-                        text="Cancel"
-                        classname="w-full md:w-[130px] btn-sm bg-primary"
-                        onClick={() =>
-                          navigate("/employees", { replace: true })
+                    <div>
+                      <SelectField
+                        label="Job Type"
+                        name="jobType"
+                        id="jobType"
+                        register={register}
+                        errors={errors}
+                        placeholder="Select job type"
+                        options={jobType}
+                        validate={(value) =>
+                          validateField(value, "Job type is required")
                         }
+                        isRequired
+                      />
+                      <SelectField
+                        label="Job Title"
+                        name="jobTitle"
+                        id="jobTitle"
+                        register={register}
+                        errors={errors}
+                        placeholder="Select job title"
+                        options={jobTitle}
+                        validate={(value) =>
+                          validateField(value, "Job title is required")
+                        }
+                        isRequired
+                      />
+                      <SelectField
+                        label="Department"
+                        name="dept"
+                        id="dept"
+                        register={register}
+                        errors={errors}
+                        placeholder="Select department"
+                        options={depts?.departments}
+                        validate={(value) =>
+                          validateField(value, "Please select a department")
+                        }
+                        isRequired
+                      />
+                      <SelectField
+                        label="Role"
+                        name="role"
+                        id="role"
+                        register={register}
+                        errors={errors}
+                        placeholder="Select role"
+                        options={employeeRole}
+                        validate={(value) =>
+                          validateField(value, "Role is required")
+                        }
+                        isRequired
                       />
                     </div>
-                  </Form>
-                </div>
-              </>
-            )}
+                  </div>
+                  <div className="flex flex-col md:flex-row-reverse gap-6 items-center">
+                    <ActionButton
+                      type="submit"
+                      text="Update"
+                      classname="w-full md:w-[130px] bg-secondary btn-sm text-zinc-800"
+                      loading={isSubmitting}
+                    />
+                    <ActionButton
+                      type="button"
+                      text="Cancel"
+                      classname="w-full md:w-[130px] btn-sm bg-primary text-zinc-800"
+                      onClick={() => navigate("/employees", { replace: true })}
+                    />
+                  </div>
+                </Form>
+              </div>
+            </>
           </>
         )}
-      </div>
+      </>
     </>
   );
 }

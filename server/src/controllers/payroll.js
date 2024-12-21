@@ -5,6 +5,7 @@ import tryCatch from "../utils/tryCatchFn.js";
 import { validatePayroll } from "../utils/validators.js";
 import {
   createPayrollService,
+  updatePayrollService,
   updatePayrollStatusService,
 } from "../services/payroll.service.js";
 
@@ -22,7 +23,10 @@ export const createPayroll = tryCatch(async (req, res) => {
 });
 
 export const getPayrollById = tryCatch(async (req, res) => {
-  const payroll = await Payroll.findOne({ payrollId: req.params.id });
+  const payroll = await Payroll.findOne({ _id: req.params.id }).populate(
+    "userId",
+    "firstName lastName"
+  );
   if (!payroll) throw new createHttpError(404, "Payroll not found");
   res.json({
     msg: "Payroll fetched successfully",
@@ -111,7 +115,7 @@ export const getLatestPayroll = tryCatch(async (req, res, next) => {
     .skip(skip)
     .limit(limit);
 
-  if (!payrolls || payrolls.length === 0) {
+  if (!payrolls) {
     return next(createHttpError(404, "No payrolls found"));
   }
   const totalCount = await Payroll.countDocuments(filter);
@@ -137,4 +141,16 @@ export const deletePayroll = tryCatch(async (req, res, next) => {
     return next(createHttpError(404, "Payroll not found"));
   }
   res.status(200).json({ msg: "Payroll deleted successfully" });
+});
+
+export const updatePayroll = tryCatch(async (req, res, next) => {
+  const { id: payrollId } = req.params;
+  if (!payrollId) {
+    return next(createHttpError(400, "Payroll id is required"));
+  }
+  const payroll = await updatePayrollService(payrollId, req);
+  if (!payroll) {
+    return next(createHttpError(404, "Payroll not found"));
+  }
+  res.status(200).json({ msg: "Payroll updated successfully", payroll });
 });

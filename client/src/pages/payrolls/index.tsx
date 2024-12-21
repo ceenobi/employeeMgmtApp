@@ -1,4 +1,4 @@
-import { ErrorMsg, PageContainer, Pagination } from "@/components";
+import { PageContainer, Pagination } from "@/components";
 import { Helmet } from "react-helmet-async";
 import { Link, Outlet, useLoaderData, useMatch } from "react-router";
 import { Plus } from "lucide-react";
@@ -13,7 +13,7 @@ export function Component() {
     user: Userinfo;
   };
   const data = useLoaderData() as {
-    payroll: {
+    data: {
       payrolls: PayrollFormData[];
       pagination: {
         currentPage: number;
@@ -22,17 +22,8 @@ export function Component() {
         totalPages: number;
       };
     };
-    error: {
-      status: string;
-      response: {
-        data: {
-          error: string;
-        };
-      };
-    };
-    status: number;
   };
-  const { payrolls, pagination } = data?.payroll ?? {};
+  const { payrolls, pagination } = data?.data ?? {};
   const roles = ["admin", "super-admin"];
 
   return (
@@ -54,28 +45,25 @@ export function Component() {
                 </Link>
               </div>
             )}
-            {data?.error && <ErrorMsg error={data?.error} />}
-            {data?.status === 200 && (
-              <>
-                {payrolls?.length > 0 ? (
-                  <div className="flex flex-col min-h-[calc(100vh-200px)] justify-between">
-                    <Suspense fallback={<div>Loading...</div>}>
-                      <Table payrolls={payrolls} userInfo={user} />
-                    </Suspense>
-                    <Pagination
-                      totalPages={pagination.totalPages}
-                      count={pagination.totalPayrolls}
-                    />
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-[50vh]">
-                    <h1 className="text-2xl font-bold text-white">
-                      No payrolls found
-                    </h1>
-                  </div>
-                )}
-              </>
-            )}
+            <>
+              {payrolls?.length > 0 ? (
+                <div className="flex flex-col min-h-[calc(100vh-200px)] justify-between">
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Table payrolls={payrolls} userInfo={user} />
+                  </Suspense>
+                  <Pagination
+                    totalPages={pagination.totalPages}
+                    count={pagination.totalPayrolls}
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[50vh]">
+                  <h1 className="text-2xl font-bold text-white">
+                    No payrolls found
+                  </h1>
+                </div>
+              )}
+            </>
           </>
         ) : (
           <Outlet />

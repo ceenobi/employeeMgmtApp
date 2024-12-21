@@ -40,6 +40,18 @@ export const updatePayrollStatus = async (
   });
 };
 
+export const updatePayroll = async (
+  payrollId: string,
+  formData: PayrollFormData,
+  token: string
+) => {
+  return await axiosInstance.patch(`/payrolls/update/${payrollId}`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export const getLatestPayroll = async (
   page: string | number,
   token: string

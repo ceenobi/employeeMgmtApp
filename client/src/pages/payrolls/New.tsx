@@ -67,9 +67,16 @@ export function Component() {
   }, [employeeName, employees, setValue]);
 
   const formFields = ["employeeId"];
-  const formFields1 = ["year"];
-  const formFields2 = ["salary", "allowances", "leaveWithoutPay", "lateDays"];
-  const formFields3 = ["tax", "deductions", "payPeriodStart", "payPeriodEnd"];
+  const formFields1 = ["year", "payPeriodStart", "payPeriodEnd"];
+  const formFields2 = [
+    "salary",
+    "leaveWithoutPay",
+    "lateDays",
+    "transport",
+    "food",
+    "miscellaneous",
+  ];
+  const formFields3 = ["late", "health", "others", "tax"];
 
   const onFormSubmit = async (data: FieldValues) => {
     const formData = {
@@ -258,13 +265,13 @@ export function Component() {
             <ActionButton
               type="submit"
               text="Create"
-              classname="w-full md:w-[130px] bg-secondary text-base-200 btn-sm"
+              classname="w-full md:w-[130px] bg-secondary text-zinc-800 btn-sm"
               loading={isSubmitting}
             />
             <ActionButton
               type="button"
               text="Cancel"
-              classname="w-full md:w-[130px] btn-sm bg-primary text-base-200"
+              classname="w-full md:w-[130px] btn-sm bg-primary text-zinc-800"
               onClick={redirect}
             />
           </div>

@@ -15,10 +15,6 @@ import verifyEmailloader from "@/pages/auth/verifyEmail/loader";
 import { useSaveToken } from "@/store/stateProvider";
 import { getDeptNEmployees } from "@/utils/queries";
 import {
-  getEmployeeLoader,
-  getEmployeesLoader,
-} from "@/pages/employees/loader";
-import {
   getDepartmentLoader,
   getDeptEmployeesLoader,
 } from "@/pages/departments/loader";
@@ -29,8 +25,10 @@ import {
 import {
   createPayrollAction,
   handlePayrollStatusOrDeletePayrollAction,
+  updatePayrollAction,
 } from "@/pages/payrolls/action";
-import { getPayrollsLoader } from "@/pages/payrolls/loader";
+import { getLatestPayrollData, getPayrollData } from "@/pages/payrolls/queries";
+import { getAnEmployee, getEmployees } from "@/pages/employees/queries";
 
 export default function AppRoutes() {
   const { token } = useSaveToken((state) => state) as {
@@ -55,11 +53,7 @@ export default function AppRoutes() {
           path: "employees",
           id: "employees",
           lazy: () => import("@/pages/employees"),
-          loader: ({ request }) =>
-            getEmployeesLoader({
-              request: request,
-              token: token,
-            }),
+          loader: ({ request }) => getEmployees({ request, token }),
           action: ({ request }) => deleteEmployeeAction({ request }, token),
           children: [
             {
@@ -72,10 +66,7 @@ export default function AppRoutes() {
               lazy: () => import("@/pages/employees/Edit"),
               action: ({ request }) => updateEmployeeAction({ request }, token),
               loader: ({ params }) =>
-                getEmployeeLoader({
-                  employeeId: params.employeeId ?? "defaultEmployeeId",
-                  token: token,
-                }),
+                getAnEmployee(params.employeeId ?? "defaultEmployeeId", token),
             },
           ],
         },
@@ -117,11 +108,7 @@ export default function AppRoutes() {
         {
           path: "payrolls",
           lazy: () => import("@/pages/payrolls"),
-          loader: ({ request }) =>
-            getPayrollsLoader({
-              request: request,
-              token: token,
-            }),
+          loader: ({ request }) => getLatestPayrollData({ request, token }),
           action: ({ request }) =>
             handlePayrollStatusOrDeletePayrollAction({ request }, token),
           children: [
@@ -131,9 +118,12 @@ export default function AppRoutes() {
               action: ({ request }) => createPayrollAction({ request }, token),
             },
             {
-              path:":id/edit",
+              path: ":id/edit",
               lazy: () => import("@/pages/payrolls/Edit"),
-            }
+              loader: ({ params }) =>
+                getPayrollData(params.id ?? "payrollId", token),
+              action: ({ request }) => updatePayrollAction({ request }, token),
+            },
           ],
         },
       ],

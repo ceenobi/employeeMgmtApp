@@ -11,6 +11,16 @@ export const createPayrollService = async (employee, req) => {
       req.body.month,
       req.body.year
     ),
+    allowances: {
+      transport: req.body.transport,
+      food: req.body.food,
+      miscellaneous: req.body.miscellaneous,
+    },
+    deductions: {
+      late: req.body.late,
+      health: req.body.health,
+      others: req.body.others,
+    },
   });
   await payroll.save();
   await mailService({
@@ -41,19 +51,73 @@ export const updatePayrollStatusService = async (status, payroll, employee) => {
 };
 
 export const updatePayrollService = async (payrollId, req) => {
-  const payroll = await Payroll.findOne({ payrollId });
+  const payroll = await Payroll.findById(payrollId);
   if (!payroll) {
     throw createHttpError(404, "Payroll not found");
   }
-  Object.keys(req.body).forEach(
-    (key) => req.body[key] === "" || null || (undefined && delete req.body[key])
+  const updatedFields = {
+    ...req.body,
+    allowances: {
+      transport: req.body.transport,
+      food: req.body.food,
+      miscellaneous: req.body.miscellaneous,
+    },
+    deductions: {
+      late: req.body.late,
+      health: req.body.health,
+      others: req.body.others,
+    },
+  };
+  Object.keys(updatedFields).forEach((key) => {
+    if (
+      updatedFields[key] === "" ||
+      updatedFields[key] === null ||
+      updatedFields[key] === undefined
+    ) {
+      delete updatedFields[key];
+    }
+  });
+  const grossSalary = parseFloat(updatedFields.salary) || 0;
+  const totalAllowances = Object.values(updatedFields.allowances).reduce(
+    (acc, allowance) => acc + (parseFloat(allowance) || 0),
+    0
   );
+
+  const totalDeductions = Object.values(updatedFields.deductions).reduce(
+    (acc, deduction) => acc + (parseFloat(deduction) || 0),
+    0
+  );
+  const taxAmount = (grossSalary + totalAllowances) * (req.body.tax / 100 || 0);
+
+  payroll.net = grossSalary + totalAllowances - totalDeductions - taxAmount;
   const updatedPayroll = await Payroll.findOneAndUpdate(
-    { payrollId },
-    { $set: req.body },
+    { _id: payrollId },
+    { $set: { ...updatedFields, net: payroll.net } },
     {
       new: true,
     }
   );
   return updatedPayroll;
 };
+
+//   if (req.body.allowances) {
+//     Object.keys(req.body.allowances).forEach((key) => {
+//       if (payroll.allowances.hasOwnProperty(key)) {
+//         payroll.allowances[key] =
+//           req.body.allowances[key] || payroll.allowances[key];
+//       } else {
+//         payroll.allowances[key] = req.body.allowances[key];
+//       }
+//     });
+//   }
+
+//   if (req.body.deductions) {
+//     Object.keys(req.body.deductions).forEach((key) => {
+//       if (payroll.deductions.hasOwnProperty(key)) {
+//         payroll.deductions[key] =
+//           req.body.deductions[key] || payroll.deductions[key];
+//       } else {
+//         payroll.deductions[key] = req.body.deductions[key];
+//       }
+//     });
+//   }

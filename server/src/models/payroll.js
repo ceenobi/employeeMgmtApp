@@ -38,14 +38,32 @@ const payrollSchema = new Schema(
       required: true,
     },
     allowances: {
-      type: Map,
-      of: Number,
-      default: new Map(),
+      transport: {
+        type: Number,
+        default: 0,
+      },
+      food: {
+        type: Number,
+        default: 0,
+      },
+      miscellaneous: {
+        type: Number,
+        default: 0,
+      },
     },
     deductions: {
-      type: Map,
-      of: Number,
-      default: new Map(),
+      late: {
+        type: Number,
+        default: 0,
+      },
+      health: {
+        type: Number,
+        default: 0,
+      },
+      others: {
+        type: Number,
+        default: 0,
+      },
     },
     tax: {
       type: Number,
@@ -99,7 +117,7 @@ payrollSchema.index({ status: 1 });
 
 // Virtual for total allowances
 payrollSchema.virtual("totalAllowances").get(function () {
-  return Array.from(this.allowances.values()).reduce(
+  return Array.from(Object.values(this.allowances)).reduce(
     (sum, value) => sum + value,
     0
   );
@@ -107,7 +125,7 @@ payrollSchema.virtual("totalAllowances").get(function () {
 
 // Virtual for total deductions
 payrollSchema.virtual("totalDeductions").get(function () {
-  return Array.from(this.deductions.values()).reduce(
+  return Array.from(Object.values(this.deductions)).reduce(
     (sum, value) => sum + value,
     0
   );
