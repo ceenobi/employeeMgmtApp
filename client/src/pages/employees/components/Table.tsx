@@ -227,7 +227,7 @@ export default function Table({
         <div className="mt-6 md:flex gap-4">
           <div className="md:w-1/4">
             <div>
-              <div className="bg-neutral text-neutral-content w-full flex items-center justify-center text-center h-28 rounded">
+              <div className="mb-6 bg-neutral text-neutral-content w-full flex items-center justify-center text-center h-28 rounded">
                 {selectedEmployee?.photo && (
                   <img
                     src={selectedEmployee?.photo}
@@ -249,7 +249,7 @@ export default function Table({
             </h1>
             <a
               href={`mailto:${selectedEmployee?.email}`}
-              className="mt-2 text-sm tooltip tooltip-accent bg-accent p-1 rounded-full text-base-100 font-bold"
+              className="mt-2 text-sm tooltip tooltip-accent bg-gray-200 p-2 rounded-full text-base-100 font-bold"
               data-tip={`Email ${selectedEmployee?.firstName}`}
             >
               {selectedEmployee?.email}
@@ -358,7 +358,7 @@ export default function Table({
             <ActionButton
               type="submit"
               text="Delete"
-              classname="w-fit bg-error btn-sm h-[24px]"
+              classname="w-fit bg-error btn-sm h-[20px]"
               loading={isSubmitting}
             />
           </div>

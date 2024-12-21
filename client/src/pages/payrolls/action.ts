@@ -60,23 +60,23 @@ export const createPayrollAction = async (
   }
 };
 
-export const deletePayrollAction = async (
-  { request }: { request: Request },
-  token: string
-) => {
-  const formData = await request.formData();
-  const id = Object.fromEntries(formData);
-  const payrollId = id.id as string;
-  try {
-    const res = await deletePayroll(payrollId, token);
-    return {
-      status: res.status,
-      msg: res.data.msg,
-    };
-  } catch (error) {
-    return { error };
-  }
-};
+// export const deletePayrollAction = async (
+//   { request }: { request: Request },
+//   token: string
+// ) => {
+//   const formData = await request.formData();
+//   const id = Object.fromEntries(formData);
+//   const payrollId = id.id as string;
+//   try {
+//     const res = await deletePayroll(payrollId, token);
+//     return {
+//       status: res.status,
+//       msg: res.data.msg,
+//     };
+//   } catch (error) {
+//     return { error };
+//   }
+// };
 
 // export const updatePayrollStatusAction = async (
 //   { request }: { request: Request },
@@ -107,36 +107,29 @@ export const handlePayrollStatusOrDeletePayrollAction = async (
   token: string
 ) => {
   const formData = await request.formData();
-  switch (request.method) {
-    case "DELETE": {
-      const id = Object.fromEntries(formData);
-      const payrollId = id.id as string;
-      try {
-        const res = await deletePayroll(payrollId, token);
-        return {
-          status: res.status,
-          msg: res.data.msg,
-        };
-      } catch (error) {
-        return { error };
-      }
+  const { id } = Object.fromEntries(formData) as { id: string };
+  console.log(request.method);
+
+  try {
+    if (request.method === "DELETE") {
+      const res = await deletePayroll(id, token);
+      return {
+        status: res.status,
+        msg: res.data.msg,
+      };
     }
-    case "PATCH": {
-      const employee = Object.fromEntries(formData);
-      const employeeId = employee.id as string;
-      const employeeData = employee as unknown as PayrollFormData;
-      try {
-        const res = await updatePayrollStatus(employeeId, employeeData, token);
-        return {
-          status: res.status,
-          msg: res.data.msg,
-          updatedStatus: res.data.updatedStatus,
-        };
-      } catch (error) {
-        return { error };
-      }
+    if (request.method === "PATCH") {
+      const payroll = Object.fromEntries(formData);
+      const payrollData = payroll as unknown as PayrollFormData;
+      console.log(payrollData);
+      const res = await updatePayrollStatus(id, payrollData, token);
+      return {
+        status: res.status,
+        msg: res.data.msg,
+        updatedStatus: res.data.updatedStatus,
+      };
     }
-    default:
-      break;
+  } catch (error) {
+    return { error };
   }
 };

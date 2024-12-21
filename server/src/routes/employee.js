@@ -12,7 +12,7 @@ import {
 const router = Router();
 
 router.get("/get", apiLimiter, verifyAuth(Roles.All), getAllEmployees);
-router.get("/all", apiLimiter, verifyAuth(Roles.All), getEmployees);
+router.get("/all", verifyAuth(Roles.All), getEmployees);
 
 router.delete(
   "/:id/delete-account",

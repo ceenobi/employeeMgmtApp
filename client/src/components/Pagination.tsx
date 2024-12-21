@@ -33,7 +33,8 @@ export default function Paginate({
   };
 
   return (
-    <div className="flex justify-end items-center">
+    <div className="mt-4 flex justify-between items-center">
+      <p>Showing {page} of {totalPages}</p>
       <Pagination
         pageSize={count}
         total={totalPages * count}

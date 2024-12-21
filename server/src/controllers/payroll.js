@@ -46,7 +46,7 @@ export const getEmployeePayrolls = tryCatch(async (req, res) => {
 
 export const updatePayrollStatus = tryCatch(async (req, res) => {
   const { status } = req.body;
-  const payroll = await Payroll.findOne({ payrollId: req.params.id });
+  const payroll = await Payroll.findOne({ _id: req.params.id });
   if (!payroll) throw new createHttpError(404, "Payroll not found");
   const employee = await Employee.findOne({ employeeId: payroll.employeeId });
   if (!employee) throw new createHttpError(404, "Employee not found");

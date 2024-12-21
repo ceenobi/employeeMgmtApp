@@ -4,9 +4,10 @@ import { useAuthProvider } from "@/store/authProvider";
 import { Plus } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { Link, Outlet, useMatch, useLoaderData } from "react-router";
-import Table from "./components/Table";
 import TableFilterOptions from "@/components/TableFilterOptions";
 import { useTableFilter } from "@/hooks";
+import { lazy, Suspense } from "react";
+const Table = lazy(() => import("./components/Table"));
 
 export function Component() {
   const {
@@ -89,15 +90,17 @@ export function Component() {
                         setStatus={setStatus}
                         resetFilter={resetFilter}
                       />
-                      <Table
-                        employees={employees}
-                        userInfo={user}
-                        jobTitle={jobTitle}
-                        jobType={jobType}
-                        role={role}
-                        dept={dept}
-                        status={status}
-                      />
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <Table
+                          employees={employees}
+                          userInfo={user}
+                          jobTitle={jobTitle}
+                          jobType={jobType}
+                          role={role}
+                          dept={dept}
+                          status={status}
+                        />
+                      </Suspense>
                     </div>
                     <Pagination
                       totalPages={pagination.totalPages}

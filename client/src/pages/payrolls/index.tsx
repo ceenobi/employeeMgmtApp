@@ -4,7 +4,8 @@ import { Link, Outlet, useLoaderData, useMatch } from "react-router";
 import { Plus } from "lucide-react";
 import { useAuthProvider } from "@/store/authProvider";
 import { PayrollFormData, Userinfo } from "@/emply-types";
-import Table from "./components/Table";
+import { lazy, Suspense } from "react";
+const Table = lazy(() => import("./components/Table"));
 
 export function Component() {
   const match = useMatch("/payrolls");
@@ -32,8 +33,6 @@ export function Component() {
     status: number;
   };
   const { payrolls, pagination } = data?.payroll ?? {};
-  console.log(data.payroll);
-
   const roles = ["admin", "super-admin"];
 
   return (
@@ -60,9 +59,9 @@ export function Component() {
               <>
                 {payrolls?.length > 0 ? (
                   <div className="flex flex-col min-h-[calc(100vh-200px)] justify-between">
-                    <div>
+                    <Suspense fallback={<div>Loading...</div>}>
                       <Table payrolls={payrolls} userInfo={user} />
-                    </div>
+                    </Suspense>
                     <Pagination
                       totalPages={pagination.totalPages}
                       count={pagination.totalPayrolls}

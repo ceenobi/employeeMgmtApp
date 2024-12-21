@@ -30,10 +30,10 @@ export const createPayroll = async (
 
 export const updatePayrollStatus = async (
   payrollId: string,
-  status: PayrollFormData,
+  formData: PayrollFormData,
   token: string
 ) => {
-  return await axiosInstance.patch(`/payrolls/${payrollId}/status`, status, {
+  return await axiosInstance.patch(`/payrolls/${payrollId}/status`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

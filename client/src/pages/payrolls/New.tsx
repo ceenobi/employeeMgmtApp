@@ -28,7 +28,7 @@ export function Component() {
   } = useForm();
   const navigate = useNavigate();
   const fetcher = useFetcher();
-  const redirect = () => navigate("/payroll");
+  const redirect = () => navigate("/payrolls", { replace: true });
   const isSubmitting = fetcher.state === "submitting";
 
   useEffect(() => {

@@ -27,14 +27,16 @@ export const createPayrollService = async (employee, req) => {
 export const updatePayrollStatusService = async (status, payroll, employee) => {
   payroll.status = status;
   await payroll.save();
-  await mailService({
-    from: process.env.EMAIL,
-    to: employee.email,
-    subject: "Payroll updated successfully",
-    text: `Your payroll has been updated to ${status} for the month of ${payroll.month} ${payroll.year}.`,
-    username: employee.firstName.concat(" ", employee.lastName),
-    btnText: "Visit",
-  });
+  if (payroll.status === "paid") {
+    await mailService({
+      from: process.env.EMAIL,
+      to: employee.email,
+      subject: "Payroll updated successfully",
+      text: `Your payroll has been updated to ${status} for the month of ${payroll.month} ${payroll.year}.`,
+      username: employee.firstName.concat(" ", employee.lastName),
+      btnText: "Visit",
+    });
+  }
   return payroll;
 };
 

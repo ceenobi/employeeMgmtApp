@@ -130,6 +130,10 @@ export default function AppRoutes() {
               lazy: () => import("@/pages/payrolls/New"),
               action: ({ request }) => createPayrollAction({ request }, token),
             },
+            {
+              path:":id/edit",
+              lazy: () => import("@/pages/payrolls/Edit"),
+            }
           ],
         },
       ],

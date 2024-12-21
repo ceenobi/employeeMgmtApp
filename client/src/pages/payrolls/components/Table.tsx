@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { ActionButton, Alert, Modal } from "@/components";
+import { ActionButton, Alert, Modal, SelectField } from "@/components";
 import { PayrollFormData, Userinfo } from "@/emply-types";
 import { formatCurrency, formatDate } from "@/utils/format";
 import handleError from "@/utils/handleError";
 import { useCallback, useEffect, useState } from "react";
-import { Form, useFetcher, useNavigate } from "react-router";
+import { Form, Link, useFetcher, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { FieldValues, useForm } from "react-hook-form";
 import { payrollStatus } from "@/utils/constants";
+import { validateField } from "@/utils/formValidate";
+import { FilePenLine } from "lucide-react";
 
 const columns = [
   { name: "PAYROLL ID", uid: "payrollId" },
@@ -45,6 +47,7 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
   const isSubmitting = fetcher.state === "submitting";
 
@@ -52,6 +55,8 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
     if (fetcher.data?.status === 200) {
       toast.success(fetcher.data?.msg);
       setIsOpenDelete(false);
+      setIsOpen(false);
+      reset();
       navigate("/payrolls", { replace: true });
     }
     if (fetcher.data?.error) {
@@ -60,7 +65,7 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
         fetcher.data?.error
       );
     }
-  }, [fetcher.data, navigate]);
+  }, [fetcher.data, navigate, reset]);
 
   const handleOpenDeleteModal = (payroll: PayrollFormData) => {
     setSelectedPayroll(payroll);
@@ -148,7 +153,7 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
         case "status":
           return (
             <div
-              className={`badge text-base-100 ${
+              className={`badge text-zinc-900 font-bold ${
                 statusColors[payroll.status as keyof typeof statusColors]
               }`}
             >
@@ -263,10 +268,15 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
       >
         <div className="mt-6 md:flex gap-4">
           <div className="w-full">
-            <h1 className="text-2xl font-bold">
-              {selectedPayroll?.userId?.firstName as string}{" "}
-              {selectedPayroll?.userId?.lastName as string}
-            </h1>
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold">
+                {selectedPayroll?.userId?.firstName as string}{" "}
+                {selectedPayroll?.userId?.lastName as string}
+              </h1>
+              <Link to={`/payrolls/${selectedPayroll?._id}/edit`}>
+                <FilePenLine />
+              </Link>
+            </div>
             <p className="text-sm mt-4">
               Payroll Id: {selectedPayroll?.payrollId}
             </p>
@@ -339,26 +349,18 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
           action="/payrolls"
           onSubmit={handleSubmit(onFormSubmit)}
         >
-          <p className="my-4">Update Payroll Status</p>
-          <select
-            className="select select-sm select-secondary w-full max-w-[150px]"
-            {...(register("status"), { required: true })}
-            defaultValue={selectedPayroll?.status}
-          >
-            <option disabled value="">
-              Select Status
-            </option>
-            {payrollStatus.map((item, index) => (
-              <option key={index} value={item.value}>
-                {item.value}
-              </option>
-            ))}
-          </select>
-          {errors.status && (
-            <p className="text-sm text-red-500">
-              Select a <strong>status</strong>
-            </p>
-          )}
+          <SelectField
+            label="Payroll Status"
+            name="status"
+            id="status"
+            register={register}
+            errors={errors}
+            placeholder="Select status"
+            options={payrollStatus}
+            validate={(value) => validateField(value, "Status is required")}
+            defaultValue={selectedPayroll?.status as string}
+            isRequired
+          />
           <div className="modal-action items-center gap-4">
             <button className="btn btn-info btn-sm" onClick={handleCloseModal}>
               Close
@@ -366,7 +368,7 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
             <ActionButton
               type="submit"
               text="Update"
-              classname="w-fit btn btn-secondary btn-sm h-[24px] text-black"
+              classname="w-fit btn btn-secondary btn-sm h-[20px] text-zinc-900"
               loading={isSubmitting}
             />
           </div>
