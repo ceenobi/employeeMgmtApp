@@ -11,6 +11,7 @@ import tryCatch from "../utils/tryCatchFn.js";
 import {
   createEmployee,
   sendLoginEmailLink,
+  sendVerifyEmailLink,
   verifyEmailStatus,
   verifyLoginToken,
 } from "../services/auth.service.js";
@@ -132,8 +133,6 @@ export const signInViaEmail = tryCatch(async (req, res, next) => {
 
 export const verifyLoginLink = tryCatch(async (req, res, next) => {
   const { userId, emailToken } = req.params;
-  console.log(userId, emailToken);
-
   if (!emailToken || !userId) {
     throw createHttpError(400, "Email token or user Id not provided");
   }
@@ -161,9 +160,23 @@ export const verifyEmail = tryCatch(async (req, res, next) => {
     throw createHttpError(400, "UserId or verificationToken not provided");
   }
   await verifyEmailStatus(userId, verificationToken);
-  // clearCache(`verify_email_${userId}`);
   res.status(200).json({
     msg: "Email verified successfully",
+  });
+});
+
+export const resendVerificationEmail = tryCatch(async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) {
+    return next(createHttpError(400, "Email is required"));
+  }
+  const employee = await Employee.findOne({ email });
+  if (!employee) {
+    return next(createHttpError(404, "User not found"));
+  }
+  await sendVerifyEmailLink(employee);
+  res.status(200).json({
+    msg: "Verification Email link has been sent",
   });
 });
 

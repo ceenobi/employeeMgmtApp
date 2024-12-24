@@ -11,7 +11,7 @@ import { cacheMiddleware } from "../config/cache.js";
 
 const router = Router();
 
-router.post("/create", verifyAuth(Roles.Admin), createDepartment);
+router.post("/create", verifyAuth(Roles.Super), createDepartment);
 router.get(
   "/get",
   verifyAuth(Roles.All),
@@ -28,7 +28,7 @@ router.get(
 
 router.patch(
   "/update/:departmentId",
-  verifyAuth(Roles.Admin),
+  verifyAuth(Roles.Super),
   updateDepartment
 );
 

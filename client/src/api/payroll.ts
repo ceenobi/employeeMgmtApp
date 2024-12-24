@@ -9,14 +9,6 @@ export const getPayroll = async (payrollId: string, token: string) => {
   });
 };
 
-export const getPayrolls = async (token: string) => {
-  return await axiosInstance.get(`/payrolls`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-};
-
 export const createPayroll = async (
   formData: PayrollFormData,
   token: string
@@ -65,6 +57,14 @@ export const getLatestPayroll = async (
 
 export const deletePayroll = async (payrollId: string, token: string) => {
   return await axiosInstance.delete(`/payrolls/${payrollId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const generatePayrolls = async (token: string) => {
+  return await axiosInstance.post("/payrolls/generate", null, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

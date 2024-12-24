@@ -8,7 +8,7 @@ export const createEmployee = async (employee) => {
   employee.verificationToken = verifyToken;
   employee.verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000;
   const employeeCreated = await employee.save();
-  const verifyEmailLink = `${process.env.CLIENT_URL}/account/verify-email/${employeeCreated._id}/${employeeCreated.verificationToken}`;
+  const verifyEmailLink = `${process.env.CLIENT_URL}/verify-email/${employeeCreated._id}/${employeeCreated.verificationToken}`;
   await mailService({
     from: process.env.EMAIL,
     to: employeeCreated.email,
@@ -85,5 +85,23 @@ export const verifyEmailStatus = async (userId, verificationToken) => {
   employee.verificationToken = undefined;
   employee.verificationTokenExpires = undefined;
   const employeeSaved = await employee.save();
+  return employeeSaved;
+};
+
+export const sendVerifyEmailLink = async (employee) => {
+  const verifyToken = crypto.randomBytes(20).toString("hex");
+  employee.verificationToken = verifyToken;
+  employee.verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000;
+  const employeeSaved = await employee.save();
+  const verifyEmailLink = `${process.env.CLIENT_URL}/verify-email/${employeeSaved._id}/${employeeSaved.verificationToken}`;
+  await mailService({
+    from: process.env.EMAIL,
+    to: employeeSaved.email,
+    subject: "Email verification",
+    text: `Verify your email! Click the link below to verify your email: ${verifyEmailLink}. Link expires in 24 hours.`,
+    username: employeeSaved.firstName.concat(" ", employeeSaved.lastName),
+    link: verifyEmailLink,
+    btnText: "Verify",
+  });
   return employeeSaved;
 };

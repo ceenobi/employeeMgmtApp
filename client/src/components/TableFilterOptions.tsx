@@ -43,7 +43,7 @@ export default function TableFilterOptions({
   };
 
   return (
-    <div className="mt-6 hidden lg:flex flex-wrap gap-6  items-center bg-base-200 p-4 rounded-lg shadow-md">
+    <div className="mt-6 hidden lg:flex flex-wrap gap-6 items-center bg-base-200 p-4 rounded-lg shadow-md">
       <select
         className="select select-sm select-secondary w-full max-w-[150px]"
         value={jobType}

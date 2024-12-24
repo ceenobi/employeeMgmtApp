@@ -48,8 +48,15 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm();
   const isSubmitting = fetcher.state === "submitting";
+
+  useEffect(() => {
+    if (selectedPayroll) {
+      setValue("status", selectedPayroll.status);
+    }
+  }, [selectedPayroll, setValue]);
 
   useEffect(() => {
     if (fetcher.data?.status === 200) {
@@ -243,17 +250,17 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
           <div className="mt-2 text-sm text-center">
             This action is permanent and cannot be reversed{" "}
           </div>
-          <div className="modal-action items-center">
-            <button
-              className="btn btn-info btn-sm"
+          <div className="modal-action items-center gap-4">
+            <ActionButton
+              type="button"
+              text="Close"
+              classname="w-fi btn btn-info btn-sm text-zinc-900"
               onClick={handleCloseDeleteModal}
-            >
-              Close
-            </button>
+            />
             <ActionButton
               type="submit"
               text="Delete"
-              classname="w-fit bg-error btn-sm h-[24px]"
+              classname="w-fit bg-error btn-sm"
               loading={isSubmitting}
             />
           </div>
@@ -366,9 +373,12 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
             isRequired
           />
           <div className="modal-action items-center gap-4">
-            <button className="btn btn-info btn-sm" onClick={handleCloseModal}>
-              Close
-            </button>
+            <ActionButton
+              type="button"
+              text="Close"
+              classname="w-fit btn btn-info btn-sm text-zinc-900"
+              onClick={handleCloseModal}
+            />
             <ActionButton
               type="submit"
               text="Update"

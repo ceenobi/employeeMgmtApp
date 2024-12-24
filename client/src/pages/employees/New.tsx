@@ -1,5 +1,6 @@
 import { ActionButton, Alert, SelectField, TextField } from "@/components";
 import { DepartmentsData } from "@/emply-types";
+import { useSaveForm } from "@/store/stateProvider";
 import {
   employeeRole,
   gender,
@@ -34,15 +35,42 @@ export function Component() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  const { form } = useSaveForm() as {
+    form: {
+      email: string;
+      password: string;
+      firstName: string;
+      lastName: string;
+      dateOfBirth: string;
+      phone: string;
+      gender: string;
+      jobType: string;
+    };
+  };
   const redirect = () => navigate("/employees");
   const isSubmitting = fetcher.state === "submitting";
 
   useEffect(() => {
+    if (form) {
+      setValue("email", form.email);
+      setValue("password", form.password);
+      setValue("firstName", form.firstName);
+      setValue("lastName", form.lastName);
+      setValue("dateOfBirth", form.dateOfBirth);
+      setValue("phone", form.phone);
+      setValue("gender", form.gender);
+      setValue("jobType", form.jobType);
+    }
+  }, [form, setValue]);
+
+  useEffect(() => {
     if (fetcher.data?.status === 201) {
       toast.success(fetcher.data?.msg);
+      useSaveForm.setState({ form: null });
       navigate("/employees", { replace: true });
     }
     if (fetcher.data?.error) {
@@ -66,6 +94,7 @@ export function Component() {
 
   const onFormSubmit = async (data: FieldValues) => {
     fetcher.submit(data, { method: "post" });
+    useSaveForm.setState({ form: data });
   };
 
   return (

@@ -18,8 +18,8 @@ export function Component() {
       deptCount: { [key: string]: number };
     };
   };
-  const roles = ["admin", "super-admin"];
-  
+  const roles = ["super-admin"];
+
   return (
     <>
       <Helmet>
@@ -50,7 +50,7 @@ export function Component() {
                     }}
                     key={index}
                   >
-                    <div className="card-body text-white">
+                    <div className="card-body text-white p-4">
                       <h2 className="card-title">{names}</h2>
                       <p> No of employees ({depts?.deptCount[names] || 0})</p>
                       <div className="card-actions justify-end">

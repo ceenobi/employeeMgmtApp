@@ -28,3 +28,16 @@ export const useToggleSidebar = create(
     }
   )
 );
+
+export const useSaveForm = create(
+  persist(
+    (set) => ({
+      form: null,
+      setForm: (state: string) => set({ form: state }),
+    }),
+    {
+      name: "emplyform",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);

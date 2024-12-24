@@ -5,6 +5,7 @@ import {
   logout,
   refreshAccessToken,
   register,
+  resendVerificationEmail,
   signInViaEmail,
   verifyEmail,
   verifyLoginLink,
@@ -36,6 +37,13 @@ router.patch(
   // authLimiter,
   // cacheMiddleware("verify_email", 120),
   verifyEmail
+);
+
+router.post(
+  "/sendVerificationEmail",
+  authLimiter,
+  verifyAuth(Roles.All),
+  resendVerificationEmail
 );
 
 router.post("/logout", logout);

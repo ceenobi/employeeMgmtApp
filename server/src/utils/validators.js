@@ -27,3 +27,57 @@ export const validatePayroll = (payroll) => {
 
   return schema.validate(payroll);
 };
+
+export const validateTask = (task) => {
+  const schema = Joi.object({
+    title: Joi.string().required(),
+    description: Joi.string().required(),
+    startDate: Joi.date().required(),
+    dueDate: Joi.date().optional(),
+    completedAt: Joi.date().optional(),
+    file: Joi.string().optional(),
+    fileId: Joi.string().optional(),
+    status: Joi.string()
+      .valid("planned", "inprogress", "completed", "postponed", "cancelled")
+      .required(),
+    priority: Joi.string().valid("low", "medium", "high").required(),
+    tags: Joi.string().optional(),
+    members: Joi.string().optional(),
+    comments: Joi.array()
+      .items(
+        Joi.object({
+          userId: Joi.string().required(),
+          comment: Joi.string().required(),
+          createdAt: Joi.date().default(Date.now),
+        })
+      )
+      .default([]),
+  });
+
+  return schema.validate(task);
+};
+
+export const validateLeave = (leave) => {
+  const schema = Joi.object({
+    description: Joi.string().required(),
+    startDate: Joi.date().required(),
+    endDate: Joi.date().required(),
+    leaveType: Joi.string()
+      .valid(
+        "vacation",
+        "sick",
+        "maternity/paternity",
+        "leave without pay",
+        "annual leave",
+        "other"
+      )
+      .required(),
+    status: Joi.string()
+      .valid("pending", "approved", "declined", "cancelled")
+      .optional(),
+    leaveDoc: Joi.string().allow("").optional(),
+    leaveDocId: Joi.string().allow("").optional(),
+  });
+
+  return schema.validate(leave);
+};

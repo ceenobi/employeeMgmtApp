@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import { ActionButton, Alert, Modal } from "@/components";
 import { Userinfo } from "@/emply-types";
 import { employeeStatusColorMap } from "@/utils/constants";
@@ -16,7 +14,7 @@ const columns = [
   { name: "DEPT", uid: "dept" },
   { name: "ROLE", uid: "role" },
   { name: "STATUS", uid: "status" },
-  { name: "ACTIONS", uid: "actions" },
+  { name: "ACTION", uid: "action" },
 ];
 type EmployeeProps = {
   employees: Userinfo[];
@@ -133,6 +131,12 @@ export default function Table({
               <p className="text-sm capitalize">{user?.dept}</p>
             </div>
           );
+        case "role":
+          return (
+            <div className="flex flex-col">
+              <p className="text-sm capitalize">{user?.role}</p>
+            </div>
+          );
         case "status":
           return (
             <div
@@ -145,7 +149,7 @@ export default function Table({
               {cellValue as React.ReactNode}
             </div>
           );
-        case "actions":
+        case "action":
           return (
             <div className="flex gap-4">
               <button
@@ -165,7 +169,7 @@ export default function Table({
             </div>
           );
         default:
-          return cellValue;
+          return ""
       }
     },
     [userInfo?.role]

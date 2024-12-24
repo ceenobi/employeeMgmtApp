@@ -1,11 +1,11 @@
 import dayjs from "dayjs";
 
-export const formatDate = (item: string) => {
+export const formatDate = (item: string | Date) => {
   const getDate = dayjs(item).format("DD/MM/YYYY");
   return getDate;
 };
 
-export const formatFullDate = (date: string) => {
+export const formatFullDate = (date: string | Date) => {
   if (date) {
     const formattedDate = new Date(date);
     if (!isNaN(formattedDate.getTime())) {
@@ -13,6 +13,16 @@ export const formatFullDate = (date: string) => {
     }
   }
   return null;
+};
+
+export const calcLeaveDays = (leave: {
+  startDate: string;
+  endDate: string;
+}) => {
+  const startDateObj = dayjs(leave.startDate);
+  const endDateObj = dayjs(leave.endDate);
+  const differenceInDays = endDateObj.diff(startDateObj, "day") + 1;
+  return differenceInDays;
 };
 
 export function formatCurrency(number: number) {

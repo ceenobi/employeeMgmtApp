@@ -78,7 +78,7 @@ export function Component() {
         <title>Create a new department</title>
         <meta
           name="description"
-          content="Create a new department, attachh a supervisor."
+          content="Create a new department, appoint a supervisor."
         />
       </Helmet>
       <h1 className="font-bold px-2 mb-6">Create a new department</h1>

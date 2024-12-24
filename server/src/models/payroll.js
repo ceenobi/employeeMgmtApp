@@ -112,7 +112,7 @@ const payrollSchema = new Schema(
 );
 
 // Indexes for efficient querying
-payrollSchema.index({ employeeId: 1, month: 1, year: 1 }, { unique: true });
+payrollSchema.index({ employeeId: 1, month: 1, year: 1 });
 payrollSchema.index({ status: 1 });
 
 // Virtual for total allowances
@@ -132,8 +132,17 @@ payrollSchema.virtual("totalDeductions").get(function () {
 });
 
 // Static method to generate payroll ID
-payrollSchema.statics.generatePayrollId = function (employeeId, month, year) {
-  return `PAY-${employeeId}-${month}-${year}`;
+payrollSchema.statics.generatePayrollId = function (employeeId) {
+  let result = "P";
+  const uniqueDigits = new Set();
+
+  while (uniqueDigits.size < 6) {
+    uniqueDigits.add(Math.floor(Math.random() * 10));
+  }
+  uniqueDigits.forEach((digit) => {
+    result += digit;
+  });
+  return `PAY-${employeeId}-${result}`;
 };
 
 // Static method to check if it's time to generate payroll
@@ -144,7 +153,7 @@ payrollSchema.statics.shouldGeneratePayroll = function (lastGenerated) {
   const daysSinceLastGenerated = Math.floor(
     (now - lastGenerated) / (1000 * 60 * 60 * 24)
   );
-  return daysSinceLastGenerated >= 25;
+  return daysSinceLastGenerated >= 22;
 };
 
 // Method to calculate net salary
@@ -161,11 +170,7 @@ payrollSchema.methods.calculateNet = function () {
 // Pre-save middleware to ensure payroll ID and calculations
 payrollSchema.pre("save", async function (next) {
   if (!this.payrollId) {
-    this.payrollId = this.constructor.generatePayrollId(
-      this.employeeId,
-      this.month,
-      this.year
-    );
+    this.payrollId = this.constructor.generatePayrollId(this.employeeId);
   }
 
   if (

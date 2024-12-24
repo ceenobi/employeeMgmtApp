@@ -67,3 +67,54 @@ export interface PayrollFormData {
     lastName?: string;
   };
 }
+
+export interface TaskFormData {
+  _id?: string;
+  title: string;
+  description: string;
+  startDate: Date;
+  dueDate?: Date;
+  file?: string;
+  fileId?: string;
+  completedAt?: Date;
+  status: "planned" | "inprogress" | "completed" | "postponed" | "cancelled";
+  priority: "low" | "medium" | "high";
+  tags?: string[];
+  members?: string[{
+    _id: string;
+    firstName: string;
+    lastName: string;
+    photo?: string;
+  }];
+  comments?: {
+    userId: string;
+    comment: string;
+    createdAt: Date;
+  }[];
+  createdBy?: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    photo?: string;
+  };
+  createdAt?: number;
+}
+
+export interface LeaveFormData {
+  length: number;
+  leaveDoc?: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  _id: string;
+  status?: string;
+  leaveType: string;
+  isApproved: boolean;
+  employee?: {
+    _id?: string;
+    firstName: string;
+    lastName: string;
+    photo?: string;
+    employeeId?: string;
+  };
+}

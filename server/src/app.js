@@ -12,6 +12,8 @@ import authRoutes from "./routes/auth.js";
 import deptRoutes from "./routes/dept.js";
 import employeeRoutes from "./routes/employee.js";
 import payrollRoutes from "./routes/payroll.js";
+import taskRoutes from "./routes/task.js";
+import leaveRoutes from "./routes/leave.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -47,6 +49,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/departments", deptRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/payrolls", payrollRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/leaves", leaveRoutes);
 
 app.use(notFoundHandler);
 // Handle all errors

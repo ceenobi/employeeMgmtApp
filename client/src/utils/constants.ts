@@ -92,6 +92,15 @@ export const inputFields = [
     isRequired: false,
   },
   {
+    label: "Due date",
+    type: "date",
+    id: "dueDate",
+    name: "dueDate",
+    placeholder: "24/24/24",
+    validate: () => null,
+    isRequired: false,
+  },
+  {
     label: "Date of Birth",
     type: "date",
     id: "dateOfBirth",
@@ -462,8 +471,8 @@ export const employeeRole = [
 export const employeeStatusColorMap: Record<string, string> = {
   active: "bg-success",
   sick: "bg-red-500",
-  other: "bg-teal-500",
-  leave: "bg-indigo-700",
+  other: "bg-teal-500 ",
+  leave: "bg-sky-700 text-white",
 };
 
 export const employeeStatus = [
@@ -562,4 +571,79 @@ export const payrollStatus = [
   {
     value: "cancelled",
   },
+];
+export const taskStatus = [
+  { value: "planned" },
+  { value: "started" },
+  { value: "inprogress" },
+  { value: "halfwayPast" },
+  { value: "completed" },
+  {
+    value: "postponed",
+  },
+  {
+    value: "cancelled",
+  },
+];
+export const taskPriority = [
+  { value: "low" },
+  { value: "medium" },
+  { value: "high" },
+];
+
+export const taskStatusColors = {
+  planned: "bg-gray-200 text-gray-800",
+  started: "bg-accent text-gray-800",
+  inprogress: "bg-sky-400 text-zinc-800",
+  halfwayPast: "bg-sky-400 text-zinc-800",
+  completed: "bg-green-200 text-green-800",
+  postponed: "bg-secondary text-zinc-800",
+  cancelled: "bg-red-200 text-red-800",
+};
+
+export const taskPriorityColors = {
+  low: "bg-gray-200 text-gray-800",
+  medium: "bg-yellow-200 text-zinc-800",
+  high: "bg-red-200 text-red-800",
+};
+
+export const taskProgress = {
+  planned: "0%",
+  started: "25%",
+  inprogress: "50%",
+  halfwayPast: "75%",
+  completed: "100%",
+  postponed: "0%",
+  cancelled: "0%",
+};
+
+export const taskProgressColors = {
+  planned: "#808080", // gray
+  started: "#00BFFF", // Deep Sky Blue
+  inprogress: "#fbbf24", // amber
+  halfwayPast: "#0d9488", // teal
+  completed: "##065f46", // Green
+  postponed: "#FFFF00", // Yellow
+  cancelled: "#FF4500", // Orange Red
+};
+
+export const leaveType = [
+  { value: "vacation" },
+  { value: "sick" },
+  { value: "maternity/paternity" },
+  { value: "annual leave" },
+  { value: "leave without pay" },
+  { value: "other" },
+];
+
+export const leaveStatus = {
+  pending: "badge-secondary",
+  approved: "badge-success",
+  rejected: "badge-error",
+};
+
+export const updateLeaveStatus = [
+  { value: "pending" },
+  { value: "approved" },
+  { value: "rejected" },
 ];

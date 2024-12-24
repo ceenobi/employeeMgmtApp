@@ -58,3 +58,14 @@ export const verifyEmail = async (
     `/auth/verifyEmail/${userId}/${verificationToken}`
   );
 };
+
+export const sendVerificationEmail = async (
+  email: UserAuthFormProps,
+  token: string
+) => {
+  return await axiosInstance.post("/auth/sendVerificationEmail", email, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

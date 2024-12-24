@@ -4,7 +4,7 @@ import { useToggleSidebar } from "@/store/stateProvider";
 import { sidebarLinks } from "@/utils/constants";
 import { useQueryClient } from "@tanstack/react-query";
 import { Fence, LogOut } from "lucide-react";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 
 export default function Sidebar() {
   const { isOpenSideBar, setIsOpenSideBar, setHideSideBar } =
@@ -18,6 +18,7 @@ export default function Sidebar() {
     logout: () => void;
   };
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const mainLinks = [
     "Dashboard",
@@ -36,6 +37,7 @@ export default function Sidebar() {
     queryClient.clear();
     localStorage.clear();
     logout();
+    navigate("/", { replace: true });
   };
 
   const handleToggle = () => {
@@ -91,7 +93,7 @@ export default function Sidebar() {
                       />
                       <div
                         className={`text-lg font-bold ${
-                          isOpenSideBar ? "hidden lg:block" : "hidden"
+                          isOpenSideBar ? "hidden md:block" : "hidden"
                         }`}
                       >
                         {name}

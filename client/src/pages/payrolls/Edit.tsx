@@ -155,7 +155,7 @@ export function Component() {
     <>
       <Helmet>
         <title>
-          Edit {payroll?.userId?.firstName} {payroll?.userId?.lastName} payroll
+          {` Edit ${payroll?.userId?.firstName} ${payroll?.userId?.lastName} payroll`}
         </title>
         <meta name="description" content="Edit payroll." />
       </Helmet>

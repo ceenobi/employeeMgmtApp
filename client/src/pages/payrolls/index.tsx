@@ -1,14 +1,27 @@
-import { PageContainer, Pagination } from "@/components";
+import { Alert, PageContainer, Pagination } from "@/components";
 import { Helmet } from "react-helmet-async";
-import { Link, Outlet, useLoaderData, useMatch } from "react-router";
+import {
+  Form,
+  Link,
+  Outlet,
+  useFetcher,
+  useLoaderData,
+  useMatch,
+  useNavigate,
+} from "react-router";
 import { Plus } from "lucide-react";
 import { useAuthProvider } from "@/store/authProvider";
 import { PayrollFormData, Userinfo } from "@/emply-types";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { toast } from "sonner";
+import handleError from "@/utils/handleError";
 const Table = lazy(() => import("./components/Table"));
 
 export function Component() {
   const match = useMatch("/payrolls");
+  const fetcher = useFetcher();
+  const navigate = useNavigate();
+  const [error, setError] = useState<string>("");
   const { user } = useAuthProvider() as {
     user: Userinfo;
   };
@@ -25,6 +38,24 @@ export function Component() {
   };
   const { payrolls, pagination } = data?.data ?? {};
   const roles = ["admin", "super-admin"];
+  const isSubmitting = fetcher.state === "submitting";
+
+  useEffect(() => {
+    if (fetcher.data?.status === 201) {
+      toast.success(fetcher.data?.msg);
+      navigate("/payrolls", { replace: true });
+    }
+    if (fetcher.data?.error) {
+      handleError(
+        setError as unknown as (error: unknown) => void,
+        fetcher.data?.error
+      );
+    }
+  }, [fetcher.data, navigate]);
+
+  const onFormSubmit = async () => {
+    fetcher.submit(null, { method: "post" });
+  };
 
   return (
     <>
@@ -33,6 +64,7 @@ export function Component() {
         <meta name="description" content="Manage employee payrolls" />
       </Helmet>
       <PageContainer>
+        {error && <Alert error={error} />}
         {match ? (
           <>
             {roles.includes(user?.role) && (
@@ -46,8 +78,22 @@ export function Component() {
               </div>
             )}
             <>
+              <Form method="post" action="/payrolls" onSubmit={onFormSubmit}  className="mt-6 flex items-center bg-base-200 p-4 rounded-lg shadow-md h-full">
+                <div>
+                  <button
+                    className="btn btn-ghost border border-secondary btn-sm"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <span className="loading loading-spinner"></span>
+                    ) : (
+                      "Generate New Payroll"
+                    )}
+                  </button>
+                </div>
+              </Form>
               {payrolls?.length > 0 ? (
-                <div className="flex flex-col min-h-[calc(100vh-200px)] justify-between">
+                <div className="flex flex-col min-h-[calc(100vh-250px)] justify-between">
                   <Suspense fallback={<div>Loading...</div>}>
                     <Table payrolls={payrolls} userInfo={user} />
                   </Suspense>

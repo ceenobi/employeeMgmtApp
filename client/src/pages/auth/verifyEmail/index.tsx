@@ -17,8 +17,6 @@ export function Component() {
   };
   const from = location.state?.from || "/";
 
-  console.log("ff", data);
-
   useEffect(() => {
     if (user?.isVerified) {
       navigate(from, { replace: true });

@@ -1,5 +1,6 @@
 import { ActionButton, Alert, SelectField, TextField } from "@/components";
 import { Userinfo } from "@/emply-types";
+import { useSaveForm } from "@/store/stateProvider";
 import { inputFields, months } from "@/utils/constants";
 import { validateField } from "@/utils/formValidate";
 import handleError from "@/utils/handleError";
@@ -28,12 +29,50 @@ export function Component() {
   } = useForm();
   const navigate = useNavigate();
   const fetcher = useFetcher();
+  const { form } = useSaveForm() as {
+    form: {
+      employeeId: string[];
+      year: string;
+      payPeriodStart: string;
+      payPeriodEnd: string;
+      salary: string;
+      leaveWithoutPay: string;
+      lateDays: string;
+      transport: string;
+      food: string;
+      miscellaneous: string;
+      late: string;
+      health: string;
+      others: string;
+      tax: string;
+    };
+  };
   const redirect = () => navigate("/payrolls", { replace: true });
   const isSubmitting = fetcher.state === "submitting";
 
   useEffect(() => {
+    if (form) {
+      setValue("employeeId", form.employeeId);
+      setValue("year", form.year);
+      setValue("payPeriodStart", form.payPeriodStart);
+      setValue("payPeriodEnd", form.payPeriodEnd);
+      setValue("salary", form.salary);
+      setValue("leaveWithoutPay", form.leaveWithoutPay);
+      setValue("lateDays", form.lateDays);
+      setValue("transport", form.transport);
+      setValue("food", form.food);
+      setValue("miscellaneous", form.miscellaneous);
+      setValue("late", form.late);
+      setValue("health", form.health);
+      setValue("others", form.others);
+      setValue("tax", form.tax);
+    }
+  }, [form, setValue]);
+
+  useEffect(() => {
     if (fetcher.data?.status === 201) {
       toast.success(fetcher.data?.msg);
+      useSaveForm.setState({ form: null });
       navigate("/payrolls", { replace: true });
     }
     if (fetcher.data?.error) {
@@ -83,6 +122,7 @@ export function Component() {
       ...data,
     };
     fetcher.submit(formData, { method: "post" });
+    useSaveForm.setState({ form: formData });
   };
 
   return (
@@ -265,13 +305,13 @@ export function Component() {
             <ActionButton
               type="submit"
               text="Create"
-              classname="w-full md:w-[130px] bg-secondary text-zinc-800 btn-sm"
+              classname="w-full md:w-[130px] bg-secondary text-zinc-800 btn-sm hover:text-white"
               loading={isSubmitting}
             />
             <ActionButton
               type="button"
               text="Cancel"
-              classname="w-full md:w-[130px] btn-sm bg-primary text-zinc-800"
+              classname="w-full md:w-[130px] btn-sm bg-primary text-zinc-800 hover:text-white"
               onClick={redirect}
             />
           </div>

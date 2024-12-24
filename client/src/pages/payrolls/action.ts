@@ -3,6 +3,7 @@ import {
   deletePayroll,
   updatePayrollStatus,
   updatePayroll,
+  generatePayrolls,
 } from "@/api/payroll";
 import { PayrollFormData } from "@/emply-types";
 
@@ -57,7 +58,7 @@ export const updatePayrollAction = async (
   }
 };
 
-export const handlePayrollStatusOrDeletePayrollAction = async (
+export const handlePayrollActions = async (
   {
     request,
   }: {
@@ -66,9 +67,7 @@ export const handlePayrollStatusOrDeletePayrollAction = async (
   token: string
 ) => {
   const formData = await request.formData();
-  const { id } = Object.fromEntries(formData) as { id: string };
-  console.log(request.method);
-
+  const { id } = Object.fromEntries(formData) as { id: string }
   try {
     if (request.method === "DELETE") {
       const res = await deletePayroll(id, token);
@@ -80,12 +79,21 @@ export const handlePayrollStatusOrDeletePayrollAction = async (
     if (request.method === "PATCH") {
       const payroll = Object.fromEntries(formData);
       const payrollData = payroll as unknown as PayrollFormData;
-      console.log(payrollData);
       const res = await updatePayrollStatus(id, payrollData, token);
       return {
         status: res.status,
         msg: res.data.msg,
         updatedStatus: res.data.updatedStatus,
+      };
+    }
+    if (request.method === "POST") {
+      // const payroll = Object.fromEntries(formData);
+      // const payrollData = payroll as unknown as PayrollFormData;
+      const res = await generatePayrolls(token);
+      return {
+        status: res.status,
+        msg: res.data.msg,
+        payrolls: res.data.payrolls,
       };
     }
   } catch (error) {

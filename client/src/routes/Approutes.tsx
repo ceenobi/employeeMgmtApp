@@ -24,15 +24,28 @@ import {
 } from "@/pages/departments/action";
 import {
   createPayrollAction,
-  handlePayrollStatusOrDeletePayrollAction,
+  handlePayrollActions,
   updatePayrollAction,
 } from "@/pages/payrolls/action";
 import { getLatestPayrollData, getPayrollData } from "@/pages/payrolls/queries";
 import { getAnEmployee, getEmployees } from "@/pages/employees/queries";
+import { createTaskAction, updateTaskAction } from "@/pages/tasks/action";
+import { getSingleTask, getTasksData } from "@/pages/tasks/queries";
+import { useAuthProvider } from "@/store/authProvider";
+import { Userinfo } from "@/emply-types";
+import { resendEmailVerificationAction } from "@/pages/auth/verifyEmail/action";
+import {
+  applyLeaveAction,
+  approveLeaveStatusAction,
+} from "@/pages/leaves/action";
+import { getLeavesData } from "@/pages/leaves/queries";
 
 export default function AppRoutes() {
   const { token } = useSaveToken((state) => state) as {
     token: string;
+  };
+  const { user } = useAuthProvider() as {
+    user: Userinfo;
   };
 
   const routes = [
@@ -47,7 +60,7 @@ export default function AppRoutes() {
           </Suspense>
         </PrivateRoutes>
       ),
-      loader: () => getDeptNEmployees(token),
+      loader: () => getDeptNEmployees(token, user),
       children: [
         {
           path: "employees",
@@ -109,8 +122,7 @@ export default function AppRoutes() {
           path: "payrolls",
           lazy: () => import("@/pages/payrolls"),
           loader: ({ request }) => getLatestPayrollData({ request, token }),
-          action: ({ request }) =>
-            handlePayrollStatusOrDeletePayrollAction({ request }, token),
+          action: ({ request }) => handlePayrollActions({ request }, token),
           children: [
             {
               path: "new",
@@ -123,6 +135,38 @@ export default function AppRoutes() {
               loader: ({ params }) =>
                 getPayrollData(params.id ?? "payrollId", token),
               action: ({ request }) => updatePayrollAction({ request }, token),
+            },
+          ],
+        },
+        {
+          path: "tasks",
+          lazy: () => import("@/pages/tasks"),
+          loader: ({ request }) => getTasksData({ request, token }),
+          children: [
+            {
+              path: "new",
+              lazy: () => import("@/pages/tasks/New"),
+              action: ({ request }) => createTaskAction({ request }, token),
+            },
+            {
+              path: ":id/edit",
+              lazy: () => import("@/pages/tasks/Edit"),
+              loader: ({ params }) =>
+                getSingleTask(params.id ?? "taskId", token),
+              action: ({ request }) => updateTaskAction({ request }, token),
+            },
+          ],
+        },
+        {
+          path: "leaves",
+          lazy: () => import("@/pages/leaves"),
+          loader: ({ request }) => getLeavesData({ request, token }),
+          action: ({ request }) => approveLeaveStatusAction({ request }, token),
+          children: [
+            {
+              path: "apply",
+              lazy: () => import("@/pages/leaves/Apply"),
+              action: ({ request }) => applyLeaveAction({ request }, token),
             },
           ],
         },
@@ -171,6 +215,12 @@ export default function AppRoutes() {
             }),
         },
       ],
+    },
+    {
+      path: "verify-redirect",
+      lazy: () => import("@/pages/auth/verifyEmail/VerifiedRedirect"),
+      action: ({ request }) =>
+        resendEmailVerificationAction({ request }, token),
     },
   ] as RouteObject[];
 

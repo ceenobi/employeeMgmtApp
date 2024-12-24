@@ -18,7 +18,7 @@ function App() {
     const cleanup = refreshToken(token as string) ?? (() => {});
     return () => cleanup?.();
   }, [checkAuth, refreshToken, token]);
-  // console.log(user);
+
   return (
     <>
       <HelmetProvider>

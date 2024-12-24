@@ -105,9 +105,7 @@ export const SelectField = ({
         {...register(name, { validate })}
         {...rest}
       >
-        <option disabled value="">
-          {placeholder}
-        </option>
+        <option value="">{placeholder}</option>
         {options.map((option, index) => (
           <option
             key={index}

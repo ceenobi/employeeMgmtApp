@@ -200,7 +200,7 @@ export function Component() {
                     type="button"
                     text="Cancel"
                     classname="w-full md:w-[130px] btn-sm bg-primary text-base-200"
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate("/departments")}
                   />
                 </div>
               </div>
