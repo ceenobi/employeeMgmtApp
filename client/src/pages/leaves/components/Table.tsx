@@ -201,7 +201,7 @@ export default function Table({ leaves, user, roles }: TableLeaveProps) {
 
   return (
     <>
-      <div className="mt-6 overflow-x-auto w-[90vw] md:w-full">
+      <div className="mt-6 overflow-x-auto">
         <table className="table table-zebra">
           <thead>
             <tr>

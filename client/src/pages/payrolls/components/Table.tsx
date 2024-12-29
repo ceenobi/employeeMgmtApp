@@ -192,7 +192,7 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
             </div>
           );
         default:
-          return ""
+          return "";
       }
     },
     [userInfo?.role]
@@ -200,7 +200,7 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
 
   return (
     <>
-      <div className="mt-6 overflow-x-auto w-[90vw] md:w-full">
+      <div className="mt-6 overflow-x-auto">
         <table className="table table-zebra">
           <thead>
             <tr>
