@@ -130,6 +130,9 @@ export const generatePayrollService = async (employeePayroll) => {
         userId: employee.userId._id,
         month: now.getMonth() + 1,
         year: now.getFullYear(),
+        bank: employee.bank,
+        accountNumber: employee.accountNumber,
+        accountName: employee.accountName,
         salary: employee.salary,
         tax: employee.tax,
         allowances: {

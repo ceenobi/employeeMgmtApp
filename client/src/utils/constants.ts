@@ -156,33 +156,6 @@ export const inputFields = [
     isRequired: true,
   },
   {
-    label: "Address",
-    type: "text",
-    id: "homeAddress",
-    name: "homeAddress",
-    placeholder: "address",
-    validate: (value: string) => validateField(value, "This field is required"),
-    isRequired: true,
-  },
-  {
-    label: "State",
-    type: "text",
-    id: "state",
-    name: "state",
-    placeholder: "current state",
-    validate: (value: string) => validateField(value, "This field is required"),
-    isRequired: true,
-  },
-  {
-    label: "Country",
-    type: "text",
-    id: "country",
-    name: "country",
-    placeholder: "country",
-    validate: (value: string) => validateField(value, "This field is required"),
-    isRequired: true,
-  },
-  {
     label: "Employee Id",
     type: "text",
     id: "employeeId",
@@ -363,6 +336,60 @@ export const inputFields = [
     validate: () => null,
     isRequired: false,
   },
+  {
+    label: "Home Address",
+    type: "text",
+    id: "homeAddress",
+    name: "homeAddress",
+    placeholder: "home address",
+    validate: (value: string) => validateField(value, "This field is required"),
+    isRequired: true,
+  },
+  {
+    label: "State",
+    type: "text",
+    id: "state",
+    name: "state",
+    placeholder: "home state where you reside",
+    validate: (value: string) => validateField(value, "This field is required"),
+    isRequired: true,
+  },
+  {
+    label: "Country",
+    type: "text",
+    id: "country",
+    name: "country",
+    placeholder: "home country where you reside",
+    validate: (value: string) => validateField(value, "This field is required"),
+    isRequired: true,
+  },
+  {
+    label: "Bank Name",
+    type: "text",
+    id: "bank",
+    name: "bank",
+    placeholder: "your bank for payment",
+    validate: (value: string) => validateField(value, "This field is required"),
+    isRequired: true,
+  },
+  {
+    label: "Bank Account Number",
+    type: "number",
+    id: "accountNumber",
+    name: "accountNumber",
+    placeholder: "your bank account number",
+    validate: (value: string) => validateField(value, "This field is required"),
+    isRequired: true,
+  },
+  {
+    label: "Bank Account Name",
+    type: "text",
+    id: "accountName",
+    name: "accountName",
+    placeholder: "your bank account name",
+    validate: (value: string) => validateField(value, "This field is required"),
+    isRequired: true,
+  },
 ];
 
 export const sidebarLinks = [
@@ -411,8 +438,8 @@ export const sidebarLinks = [
   {
     id: 8,
     Icon: Settings,
-    name: "Settings",
-    path: "/settings",
+    name: "Portal",
+    path: "/portal",
   },
 ];
 
@@ -425,6 +452,20 @@ export const gender = [
   },
   {
     value: "other",
+  },
+];
+export const maritalStatus = [
+  {
+    value: "single",
+  },
+  {
+    value: "married",
+  },
+  {
+    value: "divorced",
+  },
+  {
+    value: "widowed",
   },
 ];
 
@@ -472,7 +513,7 @@ export const employeeStatusColorMap: Record<string, string> = {
   active: "bg-success",
   sick: "bg-red-500",
   other: "bg-teal-500 ",
-  leave: "bg-sky-700 text-white",
+  leave: "bg-yellow-700",
 };
 
 export const employeeStatus = [
@@ -602,9 +643,9 @@ export const taskStatusColors = {
 };
 
 export const taskPriorityColors = {
-  low: "bg-gray-200 text-gray-800",
-  medium: "bg-yellow-200 text-zinc-800",
-  high: "bg-red-200 text-red-800",
+  low: "bg-gray-300 text-gray-900",
+  medium: "bg-yellow-600 text-zinc-800",
+  high: "bg-red-400 text-red-800",
 };
 
 export const taskProgress = {
@@ -622,7 +663,7 @@ export const taskProgressColors = {
   started: "#00BFFF", // Deep Sky Blue
   inprogress: "#fbbf24", // amber
   halfwayPast: "#0d9488", // teal
-  completed: "##065f46", // Green
+  completed: "#065f46", // Green
   postponed: "#FFFF00", // Yellow
   cancelled: "#FF4500", // Orange Red
 };
@@ -647,3 +688,19 @@ export const updateLeaveStatus = [
   { value: "approved" },
   { value: "rejected" },
 ];
+
+export const eventStatus = [
+  { value: "upcoming" },
+  { value: "ongoing" },
+  { value: "past" },
+  { value: "postponed" },
+  { value: "cancelled" },
+];
+
+export const eventStatusColors = {
+  upcoming: "bg-gray-200 text-gray-800",
+  ongoing: "bg-accent text-gray-800",
+  past: "bg-warning text-zinc-800",
+  postponed: "bg-secondary text-zinc-800",
+  cancelled: "bg-red-200 text-red-800",
+};

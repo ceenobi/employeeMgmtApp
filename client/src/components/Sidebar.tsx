@@ -4,7 +4,7 @@ import { useToggleSidebar } from "@/store/stateProvider";
 import { sidebarLinks } from "@/utils/constants";
 import { useQueryClient } from "@tanstack/react-query";
 import { Fence, LogOut } from "lucide-react";
-import { Link, NavLink, useNavigate } from "react-router";
+import { Link, NavLink } from "react-router";
 
 export default function Sidebar() {
   const { isOpenSideBar, setIsOpenSideBar, setHideSideBar } =
@@ -18,7 +18,7 @@ export default function Sidebar() {
     logout: () => void;
   };
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const mainLinks = [
     "Dashboard",
@@ -28,7 +28,7 @@ export default function Sidebar() {
     "Events",
     "Leaves",
     "Payrolls",
-    "Settings",
+    "Portal",
   ];
 
   const authRole = ["admin", "super-admin"];
@@ -37,7 +37,7 @@ export default function Sidebar() {
     queryClient.clear();
     localStorage.clear();
     logout();
-    navigate("/", { replace: true });
+    // navigate("/", { replace: true });
   };
 
   const handleToggle = () => {
@@ -49,9 +49,9 @@ export default function Sidebar() {
     <div
       className={`${
         isOpenSideBar ? "w-[220px]" : "w-[100px]"
-      } hidden md:block bg-base-200 h-screen`}
+      } hidden md:block bg-base-200 min-h-dvh fixed`}
     >
-      <div className="flex flex-col h-full justify-between p-4">
+      <div className="flex flex-col min-h-screen justify-between p-4">
         <div className="flex flex-col">
           <Link to="/">
             <button className="px-2 btn btn-ghost focus:outline-none font-bold hover:bg-transparent">
@@ -67,8 +67,8 @@ export default function Sidebar() {
             {sidebarLinks
               .filter((item) =>
                 authRole.includes(user?.role)
-                  ? mainLinks.includes(item.name) || item.name === "Payroll"
-                  : mainLinks.includes(item.name) && item.name !== "Payroll"
+                  ? mainLinks.includes(item.name) || item.name === "Payrolls"
+                  : mainLinks.includes(item.name) && item.name !== "Payrolls"
               )
               .map(({ id, Icon, name, path }) => (
                 <NavLink
@@ -80,7 +80,7 @@ export default function Sidebar() {
                 >
                   {({ isActive }) => (
                     <span
-                      className={`flex items-center my-2 p-2 hover:bg-gray-600 hover:rounded-md hover:transition duration-150 ease-out hover:ease-in gap-2 hover:text-white
+                      className={`flex items-center my-2 p-2 hover:bg-gray-600 hover:rounded-md hover:transition duration-150 ease-out hover:ease-in gap-2 hover:text-white 
                          ${
                            isActive
                              ? "bg-secondary text-base-300 w-full rounded-md"
@@ -89,7 +89,6 @@ export default function Sidebar() {
                     >
                       <Icon
                         size="1.5rem"
-                        className={`${isOpenSideBar ? "" : "mr-1"}`}
                       />
                       <div
                         className={`text-lg font-bold ${

@@ -63,13 +63,13 @@ export default function Table({
     setSelectedEmployee(user);
     setIsOpen(true);
   };
-  const handleOpenDeleteModal = (user: Userinfo) => {
-    setSelectedEmployee(user);
-    setIsOpenDelete(true);
-  };
   const handleCloseModal = () => {
     setSelectedEmployee(null);
     setIsOpen(false);
+  };
+  const handleOpenDeleteModal = (user: Userinfo) => {
+    setSelectedEmployee(user);
+    setIsOpenDelete(true);
   };
   const handleCloseDeleteModal = () => {
     setSelectedEmployee(null);
@@ -169,7 +169,7 @@ export default function Table({
             </div>
           );
         default:
-          return ""
+          return "";
       }
     },
     [userInfo?.role]
@@ -211,7 +211,7 @@ export default function Table({
           </thead>
           <tbody>
             {filteredEmployees?.map((user: Userinfo, index) => (
-              <tr key={user._id} className="hover">
+              <tr key={user?._id} className="hover">
                 <td>{index + 1}</td>
                 {columns.map((column) => (
                   <td key={column.uid}>{renderCell(user, column.uid)()}</td>
@@ -230,21 +230,19 @@ export default function Table({
       >
         <div className="mt-6 md:flex gap-4">
           <div className="md:w-1/4">
-            <div>
-              <div className="mb-6 bg-neutral text-neutral-content w-full flex items-center justify-center text-center h-28 rounded">
-                {selectedEmployee?.photo && (
-                  <img
-                    src={selectedEmployee?.photo}
-                    alt={selectedEmployee?.firstName}
-                  />
-                )}
-                {!selectedEmployee?.photo && (
-                  <span className="text-3xl">
-                    {selectedEmployee?.firstName.slice(0, 1) +
-                      (selectedEmployee?.lastName.slice(0, 1) || "")}
-                  </span>
-                )}
-              </div>
+            <div className="mb-6 bg-neutral text-neutral-content w-full flex items-center justify-center text-center h-28 rounded">
+              {selectedEmployee?.photo && (
+                <img
+                  src={selectedEmployee?.photo}
+                  alt={selectedEmployee?.firstName}
+                />
+              )}
+              {!selectedEmployee?.photo && (
+                <span className="text-3xl">
+                  {selectedEmployee?.firstName.slice(0, 1) +
+                    (selectedEmployee?.lastName.slice(0, 1) || "")}
+                </span>
+              )}
             </div>
           </div>
           <div className="md:w-2/3">
@@ -261,7 +259,7 @@ export default function Table({
             <p className="mt-2 text-md font-semibold capitalize">
               Gender: {selectedEmployee?.gender}
             </p>
-            {userInfo._id === selectedEmployee?._id && (
+            {userInfo?._id === selectedEmployee?._id && (
               <p className="mt-2 text-md font-semibold">
                 Date of Birth:{" "}
                 {formatDate(selectedEmployee?.dateOfBirth as string)}
@@ -314,7 +312,7 @@ export default function Table({
           <button className="btn btn-info btn-sm" onClick={handleCloseModal}>
             Close
           </button>
-          {["admin", "super-admin"].includes(userInfo.role) && (
+          {["admin", "super-admin"].includes(userInfo?.role) && (
             <Link to={`/employees/edit/${selectedEmployee?.employeeId}`}>
               <button
                 className="btn btn-secondary btn-sm"
@@ -353,16 +351,16 @@ export default function Table({
             This action is permanent and cannot be reversed{" "}
           </div>
           <div className="modal-action items-center">
-            <button
-              className="btn btn-info btn-sm"
+            <ActionButton
+              type="button"
+              text="Close"
+              classname="w-fit bg-accent btn-sm h-[20px] text-zinc-900"
               onClick={handleCloseDeleteModal}
-            >
-              Close
-            </button>
+            />
             <ActionButton
               type="submit"
               text="Delete"
-              classname="w-fit bg-error btn-sm h-[20px]"
+              classname="w-fit bg-error btn-sm h-[20px] text-zinc-900"
               loading={isSubmitting}
             />
           </div>

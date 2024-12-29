@@ -1,3 +1,4 @@
+import { dashBoardStats } from "@/api/dashboard";
 import { getDepartments } from "@/api/dept";
 import { getEmployees } from "@/api/employee";
 import { Userinfo } from "@/emply-types";
@@ -19,12 +20,19 @@ export const getAllEmployees = async (token: string) => {
   });
 };
 
-export const getDeptNEmployees = async (token: string, user: Userinfo) => {
-  if (!token) return null;
-  if (!user?.isVerified) return null;
-  const [depts, employees] = await Promise.all([
+export const getDashboardStats = async (token: string) => {
+  return await queryClient.fetchQuery({
+    queryKey: ["dashboard", token],
+    queryFn: () => dashBoardStats(token),
+  });
+};
+
+export const getDeptEmployeesNStats = async (token: string, user: Userinfo) => {
+  if (!token || (user && !user?.isVerified)) return null;
+  const [depts, employees, stats] = await Promise.all([
     getAllDepartments(token),
     getAllEmployees(token),
+    getDashboardStats(token),
   ]);
-  return { depts: depts.data, employees: employees.data };
+  return { depts: depts?.data, employees: employees?.data, stats: stats?.data };
 };

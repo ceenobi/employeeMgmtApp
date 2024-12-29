@@ -1,14 +1,24 @@
 import { Nav, Sidebar } from "@/components";
+import { useToggleSidebar } from "@/store/stateProvider";
 import { Outlet, ScrollRestoration } from "react-router";
 
 export default function Root() {
+  const { isOpenSideBar } = useToggleSidebar() as {
+    isOpenSideBar: boolean;
+  };
   return (
-    <div className="flex w-full min-h-screen">
+    <div>
       <Sidebar />
-      <div className="flex-1">
+      <div
+        className={`${
+          isOpenSideBar ? "md:ml-[220px]" : "md:ml-[100px]"
+        } flex-1`}
+      >
         <div className="max-w-[1280px] mx-auto">
           <Nav />
-          {<Outlet />}
+          <main>
+            <Outlet />
+          </main>
           <ScrollRestoration
             getKey={(location) => {
               return location.key;

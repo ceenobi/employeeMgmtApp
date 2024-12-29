@@ -14,6 +14,8 @@ import employeeRoutes from "./routes/employee.js";
 import payrollRoutes from "./routes/payroll.js";
 import taskRoutes from "./routes/task.js";
 import leaveRoutes from "./routes/leave.js";
+import eventRoutes from "./routes/event.js";
+import dashboardRoutes from "./routes/dashboard.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -51,6 +53,8 @@ app.use("/api/employees", employeeRoutes);
 app.use("/api/payrolls", payrollRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/leaves", leaveRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.use(notFoundHandler);
 // Handle all errors

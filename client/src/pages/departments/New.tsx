@@ -43,7 +43,7 @@ export function Component() {
 
   useEffect(() => {
     if (employeeName) {
-      const getEmployee = employees.filter((item) =>
+      const getEmployee = employees?.filter((item) =>
         employeeName?.includes(item.firstName.concat(" ", item.lastName))
       );
       const getEmployeeId = getEmployee.map((item) => item.employeeId);

@@ -45,7 +45,7 @@ export function Component() {
   const { user } = useAuthProvider() as {
     user: Userinfo;
   };
-  const getCurrentDepartment = depts.departments?.filter(
+  const getCurrentDepartment = depts?.departments?.filter(
     (dept) => dept.name === name
   );
   const { employees, pagination } = data?.employees ?? {};
@@ -94,7 +94,7 @@ export function Component() {
           </div>
           <div>
             {employees?.length > 0 ? (
-              <div className="flex flex-col min-h-[calc(100vh-200px)] justify-between">
+              <div className="flex flex-col min-h-[calc(100vh-220px)] justify-between">
                 <div>
                   <TableFilterOptions
                     jobType={jobType}

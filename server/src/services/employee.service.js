@@ -3,9 +3,11 @@ import {
   uploadToCloudinary,
 } from "../config/cloudinary.js";
 import Employee from "../models/employee.js";
+import bcrypt from "bcrypt";
+import createHttpError from "http-errors";
 
 export const updateEmployeeService = async (employeeId, employee, req) => {
-  if (req.body.photo && employee.profilePhotoId !== "") {
+  if (employee.profilePhotoId) {
     await deleteFromCloudinary(employee.profilePhotoId);
   }
   let uploadResult;
@@ -19,19 +21,49 @@ export const updateEmployeeService = async (employeeId, employee, req) => {
       ],
     });
   }
-
-  // Update employee profile photo
-  employee.photo = uploadResult?.url || employee.photo;
-  employee.profilePhotoId = uploadResult?.public_id || employee.profilePhotoId;
-  Object.keys(req.body).forEach(
-    (key) => req.body[key] === "" || null || (undefined && delete req.body[key])
-  );
+  const updatedFields = {
+    ...req.body,
+    photo: uploadResult?.url,
+    profilePhotoId: uploadResult?.public_id,
+    address: {
+      homeAddress: req.body.homeAddress,
+      state: req.body.state,
+      country: req.body.country,
+    },
+  };
+  Object.keys(updatedFields).forEach((key) => {
+    if (
+      updatedFields[key] === "" ||
+      updatedFields[key] === null ||
+      updatedFields[key] === undefined
+    ) {
+      delete updatedFields[key];
+    }
+  });
   const updatedEmployee = await Employee.findOneAndUpdate(
     { employeeId },
-    { $set: req.body },
+    { ...updatedFields },
     {
       new: true,
     }
   );
   return updatedEmployee;
+};
+
+export const updatePasswordService = async (
+  employee,
+  currentPassword,
+  newPassword
+) => {
+  const isPasswordValid = await bcrypt.compare(
+    currentPassword,
+    employee.password
+  );
+  if (!isPasswordValid) {
+    throw new createHttpError(401, "Invalid current password");
+  }
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+  employee.password = hashedPassword;
+  await employee.save();
 };

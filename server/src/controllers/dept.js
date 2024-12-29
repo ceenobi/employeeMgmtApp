@@ -22,6 +22,9 @@ export const createDepartment = tryCatch(async (req, res, next) => {
     supervisor: findEmployee.firstName.concat(" ", findEmployee.lastName),
     supervisorEmployeeId: findEmployee.employeeId,
   });
+  clearCache("departments");
+  clearCache("employeesByDept");
+  clearCache("getADepartment");
   res
     .status(201)
     .json({ department, msg: `${name} department was created successfully` });
@@ -39,7 +42,6 @@ export const getDepartments = tryCatch(async (req, res, next) => {
     acc[dept] = (acc[dept] || 0) + 1;
     return acc;
   }, {});
-  //clearCache(`departments_${(departments, getDeptNames, deptCount)}`);
   res.status(200).json({ departments, getDeptNames, deptCount });
 });
 
@@ -59,7 +61,6 @@ export const getEmployeesByDept = tryCatch(async (req, res, next) => {
     return next(createHttpError(404, "No employees found"));
   }
   const totalCount = await Employee.countDocuments({ dept });
-  clearCache(`employeesDept_${dept}_${page}_${limit}`);
   res.status(200).json({
     success: true,
     message: "Employees fetched successfully",
@@ -98,6 +99,9 @@ export const updateDepartment = tryCatch(async (req, res, next) => {
   const department = await Dept.findByIdAndUpdate(departmentId, updatedFields, {
     new: true,
   });
+  clearCache("departments");
+  clearCache("employeesByDept");
+  clearCache("getADepartment");
   res.status(200).json({ department, msg: "Department updated" });
 });
 
@@ -110,6 +114,5 @@ export const getADepartment = tryCatch(async (req, res, next) => {
   if (!department) {
     return next(createHttpError(400, "Department not found"));
   }
-  clearCache(`getADepartment_${departmentName}`);
   res.status(200).json(department);
 });

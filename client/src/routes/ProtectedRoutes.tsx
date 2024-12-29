@@ -1,11 +1,9 @@
 import { Userinfo } from "@/emply-types";
 import { useAuthProvider } from "@/store/authProvider";
-// import { useSaveToken } from "@/store/stateProvider";
 import { Navigate, useLocation } from "react-router";
 
 export const PrivateRoutes = ({ children }: { children: JSX.Element }) => {
-  // const { token } = useSaveToken() as { token: string };
-  const { isAuthenticated, user } = useAuthProvider() as {
+  const { user, isAuthenticated } = useAuthProvider() as {
     user: Userinfo;
     isAuthenticated: boolean;
   };
@@ -14,7 +12,7 @@ export const PrivateRoutes = ({ children }: { children: JSX.Element }) => {
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
-  if (!user?.isVerified) {
+  if (user && !user?.isVerified) {
     return (
       <Navigate
         to="/verify-redirect"
@@ -28,7 +26,6 @@ export const PrivateRoutes = ({ children }: { children: JSX.Element }) => {
 };
 
 export const PublicRoutes = ({ children }: { children: JSX.Element }) => {
-  // const { token } = useSaveToken() as { token: string };
   const { isAuthenticated } = useAuthProvider();
   const location = useLocation();
   const from = location.state?.from || "/";

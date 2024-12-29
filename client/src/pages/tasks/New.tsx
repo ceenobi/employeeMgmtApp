@@ -162,7 +162,7 @@ export function Component() {
           method="post"
           action="/tasks/new"
           onSubmit={handleSubmit(onFormSubmit)}
-          className="flex flex-col min-h-[calc(100vh-200px)] justify-between"
+          className="flex flex-col min-h-[calc(100vh-220px)] justify-between"
         >
           <div className="grid md:grid-cols-3 gap-8">
             <div>

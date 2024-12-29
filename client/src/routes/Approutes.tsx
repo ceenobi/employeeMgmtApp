@@ -13,7 +13,7 @@ import { signInViaEmailAction } from "@/pages/auth/forgotPassword/action";
 import verifyLoginLinkloader from "@/pages/auth/verifyLogin/loader";
 import verifyEmailloader from "@/pages/auth/verifyEmail/loader";
 import { useSaveToken } from "@/store/stateProvider";
-import { getDeptNEmployees } from "@/utils/queries";
+import { getDeptEmployeesNStats } from "@/utils/queries";
 import {
   getDepartmentLoader,
   getDeptEmployeesLoader,
@@ -29,16 +29,32 @@ import {
 } from "@/pages/payrolls/action";
 import { getLatestPayrollData, getPayrollData } from "@/pages/payrolls/queries";
 import { getAnEmployee, getEmployees } from "@/pages/employees/queries";
-import { createTaskAction, updateTaskAction } from "@/pages/tasks/action";
-import { getSingleTask, getTasksData } from "@/pages/tasks/queries";
-import { useAuthProvider } from "@/store/authProvider";
+import {
+  createTaskAction,
+  deleteTaskAction,
+  updateTaskAction,
+} from "@/pages/tasks/action";
+import { getSingleTask, getTasksData, searchTask } from "@/pages/tasks/queries";
 import { Userinfo } from "@/emply-types";
 import { resendEmailVerificationAction } from "@/pages/auth/verifyEmail/action";
 import {
   applyLeaveAction,
-  approveLeaveStatusAction,
+  updateLeaveAction,
+  updateLeaveStatusOrDeleteLeaveAction,
 } from "@/pages/leaves/action";
-import { getLeavesData } from "@/pages/leaves/queries";
+import {
+  getLeaveData,
+  getLeavesData,
+  getUserLeavesData,
+} from "@/pages/leaves/queries";
+import {
+  createEventAction,
+  updateOrDeleteEventAction,
+} from "@/pages/events/action";
+import { getEventsData, getSingleEvent } from "@/pages/events/queries";
+import { getEmployeeSummaryData } from "@/pages/portal/queries";
+import { updatePasswordAction } from "@/pages/portal/password/action";
+import { useAuthProvider } from "@/store/authProvider";
 
 export default function AppRoutes() {
   const { token } = useSaveToken((state) => state) as {
@@ -60,8 +76,12 @@ export default function AppRoutes() {
           </Suspense>
         </PrivateRoutes>
       ),
-      loader: () => getDeptNEmployees(token, user),
+      loader: () => getDeptEmployeesNStats(token, user),
       children: [
+        {
+          index: true,
+          lazy: () => import("@/pages/dashboard"),
+        },
         {
           path: "employees",
           id: "employees",
@@ -142,6 +162,7 @@ export default function AppRoutes() {
           path: "tasks",
           lazy: () => import("@/pages/tasks"),
           loader: ({ request }) => getTasksData({ request, token }),
+          action: ({ request }) => deleteTaskAction({ request }, token),
           children: [
             {
               path: "new",
@@ -155,18 +176,86 @@ export default function AppRoutes() {
                 getSingleTask(params.id ?? "taskId", token),
               action: ({ request }) => updateTaskAction({ request }, token),
             },
+            {
+              path:"search",
+              lazy:()=> import("@/pages/tasks/Search"), 
+              loader: ({ request }) => searchTask({ request, token }),
+            }
           ],
         },
         {
           path: "leaves",
           lazy: () => import("@/pages/leaves"),
-          loader: ({ request }) => getLeavesData({ request, token }),
-          action: ({ request }) => approveLeaveStatusAction({ request }, token),
+          loader: ({ request }) => getUserLeavesData({ request, token }),
+          action: ({ request }) =>
+            updateLeaveStatusOrDeleteLeaveAction({ request }, token),
           children: [
             {
               path: "apply",
               lazy: () => import("@/pages/leaves/Apply"),
               action: ({ request }) => applyLeaveAction({ request }, token),
+            },
+            {
+              path: "all-leaves",
+              lazy: () => import("@/pages/leaves/AllLeaves"),
+              loader: ({ request }) => getLeavesData({ request, token }),
+            },
+            {
+              path: ":id/edit",
+              lazy: () => import("@/pages/leaves/Edit"),
+              loader: ({ params }) =>
+                getLeaveData(params.id ?? "leaveId", token),
+              action: ({ request }) => updateLeaveAction({ request }, token),
+            },
+          ],
+        },
+        {
+          path: "events",
+          lazy: () => import("@/pages/events"),
+          loader: ({ request }) => getEventsData({ request, token }),
+          children: [
+            {
+              path: "create",
+              lazy: () => import("@/pages/events/Create"),
+              action: ({ request }) => createEventAction({ request }, token),
+            },
+            {
+              path: ":id/edit",
+              lazy: () => import("@/pages/events/Edit"),
+              loader: ({ params }) =>
+                getSingleEvent(params.id ?? "eventId", token),
+              action: ({ request }) =>
+                updateOrDeleteEventAction({ request }, token),
+            },
+          ],
+        },
+        {
+          path: "portal",
+          lazy: () => import("@/pages/portal"),
+          id: "employee-summary",
+          loader: () => getEmployeeSummaryData(token),
+          children: [
+            {
+              path: "edit-profile",
+              lazy: () => import("@/pages/portal/EditProfile"),
+              action: ({ request }) => updateEmployeeAction({ request }, token),
+            },
+            {
+              path: "events",
+              lazy: () => import("@/pages/portal/events"),
+            },
+            {
+              path: "tasks",
+              lazy: () => import("@/pages/portal/tasks"),
+            },
+            {
+              path: "payrolls",
+              lazy: () => import("@/pages/portal/payrolls"),
+            },
+            {
+              path: "change-password",
+              lazy: () => import("@/pages/portal/password"),
+              action: ({ request }) => updatePasswordAction({ request }, token),
             },
           ],
         },

@@ -64,7 +64,7 @@ export function Component() {
             )}
             <>
               {employees?.length > 0 ? (
-                <div className="flex flex-col min-h-[calc(100vh-200px)] justify-between">
+                <div className="flex flex-col min-h-[calc(100vh-220px)] justify-between">
                   <div>
                     <TableFilterOptions
                       jobType={jobType}

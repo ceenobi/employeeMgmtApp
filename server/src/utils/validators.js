@@ -7,6 +7,9 @@ export const validatePayroll = (payroll) => {
     month: Joi.number().min(1).max(12).required(),
     year: Joi.number().required(),
     salary: Joi.number().required(),
+    bank: Joi.string().required(),
+    accountNumber: Joi.number().required(),
+    accountName: Joi.string().required(),
     transport: Joi.number(),
     food: Joi.number(),
     miscellaneous: Joi.number(),
@@ -35,13 +38,13 @@ export const validateTask = (task) => {
     startDate: Joi.date().required(),
     dueDate: Joi.date().optional(),
     completedAt: Joi.date().optional(),
-    file: Joi.string().optional(),
+    file: Joi.string().allow("").optional(),
     fileId: Joi.string().optional(),
     status: Joi.string()
       .valid("planned", "inprogress", "completed", "postponed", "cancelled")
       .required(),
     priority: Joi.string().valid("low", "medium", "high").required(),
-    tags: Joi.string().optional(),
+    tags: Joi.string().allow("").optional(),
     members: Joi.string().optional(),
     comments: Joi.array()
       .items(
@@ -80,4 +83,22 @@ export const validateLeave = (leave) => {
   });
 
   return schema.validate(leave);
+};
+
+export const validateEvent = (event) => {
+  const schema = Joi.object({
+    title: Joi.string().required(),
+    description: Joi.string().required(),
+    startDate: Joi.date().required(),
+    endDate: Joi.date().required(),
+    location: Joi.string().allow("").optional(),
+    photo: Joi.string().allow("").optional(),
+    photoId: Joi.string().allow("").optional(),
+    status: Joi.string()
+      .valid("ongoing", "past", "cancelled", "postponed", "upcoming")
+      .optional(),
+    time: Joi.string().optional(),
+  });
+
+  return schema.validate(event);
 };

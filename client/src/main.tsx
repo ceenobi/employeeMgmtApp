@@ -1,10 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import App from "./App.tsx";
 import "./index.css";
 import "easymde/dist/easymde.min.css";
-import App from "./App.tsx";
 import "@fontsource/lato";
-import '@fontsource/poppins';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();

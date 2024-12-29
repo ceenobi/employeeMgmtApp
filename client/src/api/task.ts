@@ -24,6 +24,13 @@ export const getTask = async (id: string, token: string) => {
     },
   });
 };
+export const deleteTask = async (id: string, token: string) => {
+  return await axiosInstance.delete(`/tasks/delete/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
 export const updateTask = async (
   id: string,
@@ -35,4 +42,19 @@ export const updateTask = async (
       Authorization: `Bearer ${token}`,
     },
   });
+};
+
+export const searchTasks = async (
+  searchQuery: string,
+  page: string | number,
+  token: string
+) => {
+  return await axiosInstance.get(
+    `/tasks/search?q=${searchQuery}&page=${page}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };

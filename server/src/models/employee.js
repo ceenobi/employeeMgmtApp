@@ -37,6 +37,18 @@ const employeeSchema = new Schema(
       type: String,
       unique: true,
     },
+    bank: {
+      type: String,
+      required: true,
+    },
+    accountNumber: {
+      type: Number,
+      required: true,
+    },
+    accountName: {
+      type: String,
+      required: true,
+    },
     dateOfBirth: {
       type: Date,
       required: true,

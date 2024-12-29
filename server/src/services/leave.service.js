@@ -41,13 +41,14 @@ export const createLeaveService = async (userId, req) => {
   return leave;
 };
 
-const leaveType = [
-  "vacation",
-  "maternity/paternity",
-  "annual leave",
-  "leave without pay",
-  "other",
-];
+// const leaveType = [
+//   "vacation",
+//   "maternity/paternity",
+//   "annual leave",
+//   "leave without pay",
+//   "other",
+// ];
+
 export const updateLeaveRequestService = async (leaveId, req) => {
   const updatedLeave = await Leave.findByIdAndUpdate(
     leaveId,
@@ -64,12 +65,11 @@ export const updateLeaveRequestService = async (leaveId, req) => {
   let leaveStatus = updatedLeave.status;
   if (leaveStatus === "approved") {
     employee.leaveCount -= differenceInDays;
-    // updatedLeave.isApproved = true;
-    if (updatedLeave.leaveType === "sick") {
-      employee.status = "sick";
-    } else if (leaveType.includes(updatedLeave.leaveType)) {
-      employee.status = "leave";
-    }
+    // if (updatedLeave.leaveType === "sick") {
+    //   employee.status = "sick";
+    // } else if (leaveType.includes(updatedLeave.leaveType)) {
+    //   employee.status = "leave";
+    // }
     await employee.save();
   }
   if (leaveStatus === "rejected") {
@@ -93,3 +93,66 @@ export const updateLeaveRequestService = async (leaveId, req) => {
   });
   return updatedLeave;
 };
+
+export const updateLeaveService = async (leaveId, leave, req) => {
+  if (leave.leaveDocId) {
+    await deleteFromCloudinary(leave.leaveDocId);
+  }
+  let uploadResults;
+  if (req.body.leaveDoc) {
+    const uploadResult = await uploadToCloudinary(req.body.leaveDoc, {
+      folder: "emplymgmt/leaves",
+    });
+    uploadResults = uploadResult;
+  }
+  const updatedFields = {
+    ...req.body,
+    leaveDoc: uploadResults?.url,
+    leaveDocId: uploadResults?.public_id,
+  };
+
+  Object.keys(updatedFields).forEach((key) => {
+    if (
+      updatedFields[key] === "" ||
+      updatedFields[key] === null ||
+      updatedFields[key] === undefined
+    ) {
+      delete updatedFields[key];
+    }
+  });
+  const updatedLeave = await Leave.findByIdAndUpdate(
+    leaveId,
+    { ...updatedFields },
+    { new: true }
+  );
+  return updatedLeave;
+};
+
+export const updateEmployeeLeaveStatus = async (leaves, employee) => {
+  const updatedLeaves = await Promise.all(
+    leaves.map(async (leave) => {
+      let startDateObj = dayjs(leave.startDate);
+      let endDateObj = dayjs(leave.endDate);
+      let currentDate = dayjs();
+      if (!employee) return leave;
+      if (startDateObj.isAfter(currentDate, "minute")) {
+        employee.status = "active";
+      } else if (!endDateObj.isAfter(currentDate, "minute")) {
+        employee.status = "leave";
+      } else if (leave.status === "approved") {
+        if (endDateObj.isBefore(currentDate, "minute")) {
+          employee.status = "active";
+        } else {
+          employee.status = "leave";
+        }
+      } else if (leave.status === "rejected") {
+        employee.status = "active";
+      }
+      await employee.save();
+      await leave.save();
+      return leave;
+    })
+  );
+  return updatedLeaves;
+};
+

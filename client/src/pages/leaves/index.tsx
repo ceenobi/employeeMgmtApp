@@ -1,17 +1,20 @@
 import { PageContainer, Pagination } from "@/components";
-import { LeaveFormData } from "@/emply-types";
-// import { useAuthProvider } from "@/store/authProvider";
+import { LeaveFormData, Userinfo } from "@/emply-types";
 import { Plus } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { Link, Outlet, useLoaderData, useMatch } from "react-router";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
+import { leaveStatus, leaveType } from "@/utils/constants";
+import { useAuthProvider } from "@/store/authProvider";
 const Table = lazy(() => import("./components/Table"));
 
 export function Component() {
+  const [selectLeaveType, setSelectLeaveType] = useState<string>("");
+  const [selectLeaveStatus, setSelectLeaveStatus] = useState<string>("");
   const match = useMatch("/leaves");
-  //   const { user } = useAuthProvider() as {
-  //     user: Userinfo;
-  //   };
+  const { user } = useAuthProvider() as {
+    user: Userinfo;
+  };
   const data = useLoaderData() as {
     data: {
       leaves: LeaveFormData[];
@@ -24,8 +27,28 @@ export function Component() {
     };
   };
   const { leaves, pagination } = data?.data ?? {};
-//   const roles = ["super-admin"];
-//   console.log(leaves);
+  const roles = ["admin", "super-admin"];
+  const resetFilter = () => {
+    setSelectLeaveType("");
+    setSelectLeaveStatus("");
+  };
+  
+  const filteredLeaves = useMemo(() => {
+    if (!selectLeaveType && !selectLeaveStatus) {
+      return leaves;
+    }
+    const filtered = leaves?.filter((leave: LeaveFormData) => {
+      const matchesLeaveType = selectLeaveType
+        ? leave.leaveType === selectLeaveType
+        : true;
+      const matchesLeaveStatus = selectLeaveStatus
+        ? leave.status === selectLeaveStatus
+        : true;
+
+      return matchesLeaveType && matchesLeaveStatus;
+    });
+    return filtered;
+  }, [leaves, selectLeaveStatus, selectLeaveType]);
 
   return (
     <>
@@ -44,13 +67,63 @@ export function Component() {
                 </button>
               </Link>
             </div>
+            <div className="mt-6 hidden lg:flex items-center justify-between bg-base-200 p-4 rounded-lg shadow-md gap-6 w-full">
+              <h1 className="font-bold">
+                Leave count: <span>({user?.leaveCount})</span>
+              </h1>
+              <div className="flex flex-wra gap-6 items-center justify-cente">
+                <h1 className="font-bold">Sort:</h1>
+                <select
+                  className="select select-sm select-secondary w-full max-w-[150px]"
+                  value={selectLeaveType}
+                  onChange={(e) => setSelectLeaveType(e.target.value)}
+                >
+                  <option disabled value="">
+                    Filter Type
+                  </option>
+                  {leaveType.map((item, index) => (
+                    <option key={index} value={item.value}>
+                      {item.value}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  className="select select-sm select-secondary w-full max-w-[150px]"
+                  value={selectLeaveStatus}
+                  onChange={(e) => setSelectLeaveStatus(e.target.value)}
+                >
+                  <option disabled value="">
+                    Filter Status
+                  </option>
+                  {Object.keys(leaveStatus).map((item, index) => (
+                    <option key={index} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={resetFilter}
+                  className="btn btn-sm btn-secondary"
+                >
+                  Reset
+                </button>
+              </div>
+
+              {roles.includes(user?.role) && (
+                <Link
+                  to="all-leaves"
+                  className="text-primary text-sm text-right hover:underline"
+                >
+                  Approve leaves requests
+                </Link>
+              )}
+            </div>
             {leaves?.length > 0 ? (
-              <div className="flex flex-col min-h-[calc(100vh-200px)] justify-between">
-                <div>
-                  <Suspense fallback={<div>Loading...</div>}>
-                    <Table leaves={leaves} />
-                  </Suspense>
-                </div>
+              <div className="flex flex-col min-h-[calc(100vh-220px)] justify-between">
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Table leaves={filteredLeaves} user={user} roles={roles} />
+                </Suspense>
+
                 <Pagination
                   totalPages={pagination.totalPages}
                   count={pagination.totalLeaves}

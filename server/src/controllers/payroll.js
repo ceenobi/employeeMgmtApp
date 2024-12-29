@@ -9,6 +9,7 @@ import {
   updatePayrollService,
   updatePayrollStatusService,
 } from "../services/payroll.service.js";
+import { clearCache } from "../config/cache.js";
 
 export const createPayroll = tryCatch(async (req, res) => {
   const { error } = validatePayroll(req.body);
@@ -17,6 +18,9 @@ export const createPayroll = tryCatch(async (req, res) => {
   if (!employee) throw new createHttpError(404, "Employee not found");
   const payroll = await createPayrollService(employee, req);
   await payroll.save();
+  clearCache("getPayroll");
+  clearCache("employeePayrolls");
+  clearCache("latestPayroll");
   res.status(201).json({
     msg: "Payroll created successfully",
     payroll,
@@ -60,6 +64,9 @@ export const updatePayrollStatus = tryCatch(async (req, res) => {
     payroll,
     employee
   );
+  clearCache("getPayroll");
+  clearCache("employeePayrolls");
+  clearCache("latestPayroll");
   res.json({
     msg: "Payroll status updated successfully",
     updatedStatus,
@@ -126,6 +133,9 @@ export const deletePayroll = tryCatch(async (req, res, next) => {
   if (!payroll) {
     return next(createHttpError(404, "Payroll not found"));
   }
+  clearCache("getPayroll");
+  clearCache("employeePayrolls");
+  clearCache("latestPayroll");
   res.status(200).json({ msg: "Payroll deleted successfully" });
 });
 
@@ -138,5 +148,26 @@ export const updatePayroll = tryCatch(async (req, res, next) => {
   if (!payroll) {
     return next(createHttpError(404, "Payroll not found"));
   }
+  clearCache("getPayroll");
+  clearCache("employeePayrolls");
+  clearCache("latestPayroll");
   res.status(200).json({ msg: "Payroll updated successfully", payroll });
+});
+
+export const getPayroll = tryCatch(async (req, res, next) => {
+  const { id: userId } = req.user;
+  const { employeeId } = req.params;
+  if (!employeeId) {
+    return next(createHttpError(400, "Employee id is required"));
+  }
+  const getEmployee = await Employee.findById(userId);
+  const payroll = await Payroll.find({ employeeId }).sort({ _id: -1 }).limit(1);
+
+  if (!payroll) {
+    return next(createHttpError(404, "Employee payroll not found"));
+  }
+  if (getEmployee.employeeId !== employeeId) {
+    return next(createHttpError(403, "Access denied"));
+  }
+  res.status(200).json(payroll);
 });

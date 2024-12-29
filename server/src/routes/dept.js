@@ -15,14 +15,14 @@ router.post("/create", verifyAuth(Roles.Super), createDepartment);
 router.get(
   "/get",
   verifyAuth(Roles.All),
-  //cacheMiddleware("departments", 300),
+  cacheMiddleware("departments", 300),
   getDepartments
 );
 
 router.get(
   "/get/:dept",
   verifyAuth(Roles.All),
-  cacheMiddleware("employeesDept", 300),
+  cacheMiddleware("employeesByDept", 300),
   getEmployeesByDept
 );
 

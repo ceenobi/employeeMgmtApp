@@ -26,19 +26,16 @@ export default function Drawer() {
     "Employees",
     "Events",
     "Leaves",
-    "Payroll",
-    "Settings",
+    "Payrolls",
+    "Portal",
   ];
 
   const authRole = ["admin", "super-admin"];
 
   return (
     <>
-      <Menu
-        onClick={() => setIsOpen(!isOpen)}
-        size={28}
-      />
-      <div className="drawer md:hidden z-40">
+      <Menu onClick={() => setIsOpen(!isOpen)} size={28} />
+      <div className="drawer md:hidden z-50">
         <input
           type="checkbox"
           className="drawer-toggle"
@@ -81,7 +78,7 @@ export default function Drawer() {
                             className={`flex items-center my-2 p-2 hover:bg-secondary hover:rounded-md hover:transition duration-150 ease-out hover:ease-in gap-2 hover:text-white
                        ${
                          isActive
-                           ? "bg-cream-100 text-sky-600 w-full rounded-md"
+                           ? "bg-secondary text-base-300 w-full rounded-md"
                            : "text-sky-100"
                        }`}
                           >

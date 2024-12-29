@@ -34,7 +34,11 @@ export function Component() {
   };
   const formFields = ["startDate", "endDate"];
   const isSubmitting = fetcher.state === "submitting";
-  const redirect = () => navigate("/tasks", { replace: true });
+  const redirect = () => {
+    setSelectedFile("");
+    setValue("leaveDoc", "");
+    navigate("/leaves", { replace: true });
+  };
 
   useEffect(() => {
     if (form) {
@@ -107,7 +111,7 @@ export function Component() {
           method="post"
           action="/leaves/apply"
           onSubmit={handleSubmit(onFormSubmit)}
-          className="flex flex-col min-h-[calc(100vh-200px)] justify-between"
+          className="flex flex-col min-h-[calc(100vh-220px)] justify-between"
         >
           <div className="grid md:grid-cols-3 gap-8">
             <div>

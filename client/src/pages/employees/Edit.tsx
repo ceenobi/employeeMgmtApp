@@ -65,6 +65,9 @@ export function Component() {
       setValue("jobType", employee?.jobType);
       setValue("jobTitle", employee?.jobTitle);
       setValue("role", employee?.role);
+      setValue("bank", employee?.bank);
+      setValue("accountName", employee?.accountName);
+      setValue("accountNumber", employee?.accountNumber);
     }
   }, [employee, setValue]);
 
@@ -88,7 +91,9 @@ export function Component() {
     "lastName",
     "dateOfBirth",
     "jobType",
+    "phone",
   ];
+  const formFields2 = ["bank", "accountName", "accountNumber"];
 
   const onFormSubmit = async (formData: FieldValues) => {
     fetcher.submit(
@@ -113,9 +118,9 @@ export function Component() {
           <>
             <>
               <h1 className="font-bold px-2">
-                Edit employee{" "}
+                Edit employee -
                 <span className="">
-                  {employee?.firstName.concat(" ", employee?.lastName)}
+                {" "} {employee?.firstName.concat(" ", employee?.lastName)}
                 </span>
               </h1>
               <div className="mt-6 py-4 px-2">
@@ -126,7 +131,7 @@ export function Component() {
                   onSubmit={handleSubmit(onFormSubmit)}
                   className="flex flex-col min-h-[calc(100vh-200px)] justify-between"
                 >
-                  <div className="grid md:grid-cols-2 gap-8">
+                  <div className="grid md:grid-cols-3 gap-8">
                     <div>
                       {inputFields
                         .filter((item) => formFields1.includes(item.name))
@@ -208,6 +213,34 @@ export function Component() {
                         }
                         isRequired
                       />
+                    </div>
+                    <div>
+                      {inputFields
+                        .filter((item) => formFields2.includes(item.name))
+                        .map(
+                          ({
+                            type,
+                            id,
+                            name,
+                            label,
+                            placeholder,
+                            validate,
+                            isRequired,
+                          }) => (
+                            <TextField
+                              type={type}
+                              id={id}
+                              name={name}
+                              register={register}
+                              label={label}
+                              placeholder={placeholder}
+                              key={id}
+                              errors={errors}
+                              validate={(value) => validate(value) || undefined}
+                              isRequired={isRequired}
+                            />
+                          )
+                        )}
                     </div>
                   </div>
                   <div className="flex flex-col md:flex-row-reverse gap-6 items-center">

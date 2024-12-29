@@ -13,7 +13,7 @@ export default function UnAuthorized() {
           Sorry, you are not authorized to access this page
         </h1>
         <button
-          className="mt-4 btn btn-accent"
+          className="mt-4 btn btn-error text-white"
           onClick={() => navigate(from, { replace: true })}
         >
           Go back

@@ -39,24 +39,26 @@ export function Component() {
                 </Link>
               </div>
             )}
-            <div className="mt-8 grid md:grid-cols-4 gap-4 items-center">
+            <div className="mt-8 grid md:grid-cols-3 lg:grid-cols-4 gap-4 items-center">
               {depts?.getDeptNames
                 .sort()
                 .map((names: string, index: number) => (
                   <div
-                    className="card bg-base-200 text-primary-content min-w-[100%] lg:min-w-[220px] shadow-lg border border-l-4"
+                    className="card bg-base-200 text-primary-content min-w-[100%] lg:min-w-[220px] shadow-lg border-l-2 rounded-lg"
                     style={{
                       borderLeftColor: getRandomColor(names as string),
                     }}
                     key={index}
                   >
                     <div className="card-body text-white p-4">
-                      <h2 className="card-title">{names}</h2>
+                      <h1 className="card-title md:text-[1.1rem] lg:text-lg">
+                        {names}
+                      </h1>
                       <p> No of employees ({depts?.deptCount[names] || 0})</p>
                       <div className="card-actions justify-end">
                         <Link to={`/departments/${names}`}>
-                          <button className="btn btn-xs btn-secondary">
-                            Details
+                          <button className="btn btn-xs btn-primary">
+                            View
                           </button>
                         </Link>
                       </div>

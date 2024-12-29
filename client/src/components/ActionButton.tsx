@@ -18,7 +18,7 @@ export default function ActionButton({
       type={type}
       disabled={loading}
       onClick={onClick}
-      className={`btn h-[40px] text-white border-0 font-bold ${classname}`}
+      className={`btn h-[40px] hover:text-white border-0 font-bold ${classname}`}
     >
       {loading ? <span className="loading loading-spinner"></span> : text}
     </button>

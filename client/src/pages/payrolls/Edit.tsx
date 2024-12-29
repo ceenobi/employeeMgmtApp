@@ -91,6 +91,9 @@ export function Component() {
       setValue("late", payroll?.deductions?.late || "0");
       setValue("health", payroll?.deductions?.health || "0");
       setValue("others", payroll?.deductions?.others || "0");
+      setValue("bank", payroll?.bank);
+      setValue("accountNumber", payroll?.accountNumber);
+      setValue("accountName", payroll?.accountName);
     }
   }, [payroll, setValue]);
 
@@ -126,12 +129,23 @@ export function Component() {
       );
       const getEmployeeId = getEmployee.map((item) => item.employeeId);
       setValue("employeeId", getEmployeeId);
+      const getEmployeeBank = getEmployee.map((item) => item.bank);
+      setValue("bank", getEmployeeBank);
+      const getEmployeeAccountName = getEmployee.map(
+        (item) => item.accountName
+      );
+      setValue("accountName", getEmployeeAccountName);
+      const getEmployeeAccountNumber = getEmployee.map(
+        (item) => item.accountNumber
+      );
+      setValue("accountNumber", getEmployeeAccountNumber);
     }
   }, [employeeName, employees, setValue]);
 
-  const formFields = ["employeeId"];
-  const formFields1 = ["year", "payPeriodStart", "payPeriodEnd"];
+  const formFields = ["employeeId", "bank", "accountNumber", "accountName"];
+  const formFields1 = ["payPeriodStart", "payPeriodEnd"];
   const formFields2 = [
+    "year",
     "salary",
     "leaveWithoutPay",
     "lateDays",
@@ -180,7 +194,7 @@ export function Component() {
                 <div className="grid md:grid-cols-3 gap-8">
                   <div>
                     <SelectField
-                      label="Select employee"
+                      label="Select Employee"
                       name="employee"
                       id="employee"
                       register={register}

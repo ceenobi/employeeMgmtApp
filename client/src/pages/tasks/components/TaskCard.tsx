@@ -9,7 +9,6 @@ import {
 import TimeAgo from "timeago-react";
 import { useState } from "react";
 import { Modal } from "@/components";
-import { Helmet } from "react-helmet-async";
 import { formatDate } from "@/utils/format";
 import { Paperclip } from "lucide-react";
 import { useAuthProvider } from "@/store/authProvider";
@@ -125,10 +124,6 @@ export default function TaskCard({
       >
         {active === index && (
           <>
-            <Helmet>
-              <title>{`View Task ${task?.title}`}</title>
-              <meta name="description" content="View task details" />
-            </Helmet>
             <h1 className="mt-4 text-2xl font-bold">{task?.title}</h1>
             <div className="mt-4 flex items-center gap-2">
               <p>Priority:</p>

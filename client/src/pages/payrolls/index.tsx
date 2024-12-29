@@ -93,7 +93,7 @@ export function Component() {
                 </div>
               </Form>
               {payrolls?.length > 0 ? (
-                <div className="flex flex-col min-h-[calc(100vh-250px)] justify-between">
+                <div className="flex flex-col min-h-[calc(100vh-220px)] justify-between">
                   <Suspense fallback={<div>Loading...</div>}>
                     <Table payrolls={payrolls} userInfo={user} />
                   </Suspense>

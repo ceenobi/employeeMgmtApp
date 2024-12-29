@@ -1,6 +1,7 @@
 // import { useEffect } from "react";
 import {
   isRouteErrorResponse,
+  useLocation,
   useNavigate,
   useRouteError,
 } from "react-router";
@@ -23,7 +24,7 @@ interface RouteErrorResponse extends ErrorResponse {
 
 export default function ErrorBoundary() {
   const navigate = useNavigate();
-  // const location = useLocation();
+  const location = useLocation();
   const error = useRouteError() as RouteErrorResponse;
   console.error("Error object:", error);
 
@@ -36,19 +37,17 @@ export default function ErrorBoundary() {
 
   console.log("Error message:", errorMessage);
 
-  // useEffect(() => {
-  //   if (errorMessage === "Session expired, pls login ") {
-  //     navigate("/login");
-  //   }
-  // }, [errorMessage, navigate]);
-
-  // const from = location.state?.from || "/";
+  const from = location.state?.from || "/";
   const redirect = () => {
-    navigate(-1);
+    if (error?.status === 401) {
+      navigate(0);
+    } else {
+      navigate(from, { replace: true });
+    }
   };
 
   return (
-    <div className="max-w-[968px] mx-auto p-4">
+    <div className="max-w-[768px] mx-auto p-4">
       <div className="flex flex-col justify-center align-items-center min-h-dvh">
         <h1 className="text-6xl text-center font-bold">Ooops!</h1>
         <div className="mt-4 text-center">
@@ -61,7 +60,7 @@ export default function ErrorBoundary() {
           </div>
           <div className="mt-4 text-center">
             <ActionButton
-              classname="text-md mx-auto font-semibold btn-error"
+              classname="mx-auto font-semibold btn btn-error"
               onClick={redirect}
               type="button"
               text="Go Back"

@@ -355,23 +355,7 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
             <div className="divider"></div>
           </div>
         </div>
-        <Form
-          method="patch"
-          action="/payrolls"
-          onSubmit={handleSubmit(onFormSubmit)}
-        >
-          <SelectField
-            label="Payroll Status"
-            name="status"
-            id="status"
-            register={register}
-            errors={errors}
-            placeholder="Select status"
-            options={payrollStatus}
-            validate={(value) => validateField(value, "Status is required")}
-            defaultValue={selectedPayroll?.status as string}
-            isRequired
-          />
+        {!["admin", "super-admin"].includes(userInfo?.role) && (
           <div className="modal-action items-center gap-4">
             <ActionButton
               type="button"
@@ -379,14 +363,42 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
               classname="w-fit btn btn-info btn-sm text-zinc-900"
               onClick={handleCloseModal}
             />
-            <ActionButton
-              type="submit"
-              text="Update"
-              classname="w-fit btn btn-secondary btn-sm h-[20px] text-zinc-900"
-              loading={isSubmitting}
-            />
           </div>
-        </Form>
+        )}
+        {["admin", "super-admin"].includes(userInfo?.role) && (
+          <Form
+            method="patch"
+            action="/payrolls"
+            onSubmit={handleSubmit(onFormSubmit)}
+          >
+            <SelectField
+              label="Payroll Status"
+              name="status"
+              id="status"
+              register={register}
+              errors={errors}
+              placeholder="Select status"
+              options={payrollStatus}
+              validate={(value) => validateField(value, "Status is required")}
+              defaultValue={selectedPayroll?.status as string}
+              isRequired
+            />
+            <div className="modal-action items-center gap-4">
+              <ActionButton
+                type="button"
+                text="Close"
+                classname="w-fit btn btn-info btn-sm text-zinc-900"
+                onClick={handleCloseModal}
+              />
+              <ActionButton
+                type="submit"
+                text="Update"
+                classname="w-fit btn btn-secondary btn-sm h-[20px] text-zinc-900"
+                loading={isSubmitting}
+              />
+            </div>
+          </Form>
+        )}
       </Modal>
     </>
   );

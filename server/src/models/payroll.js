@@ -37,6 +37,18 @@ const payrollSchema = new Schema(
       type: Number,
       required: true,
     },
+    bank: {
+      type: String,
+      required: true,
+    },
+    accountNumber: {
+      type: Number,
+      required: true,
+    },
+    accountName: {
+      type: String,
+      required: true,
+    },
     allowances: {
       transport: {
         type: Number,

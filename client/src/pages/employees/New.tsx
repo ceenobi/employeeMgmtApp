@@ -49,6 +49,9 @@ export function Component() {
       phone: string;
       gender: string;
       jobType: string;
+      bank: string;
+      accountName: string;
+      accountNumber: string;
     };
   };
   const redirect = () => navigate("/employees");
@@ -64,6 +67,9 @@ export function Component() {
       setValue("phone", form.phone);
       setValue("gender", form.gender);
       setValue("jobType", form.jobType);
+      setValue("bank", form.bank);
+      setValue("accountName", form.accountName);
+      setValue("accountNumber", form.accountNumber);
     }
   }, [form, setValue]);
 
@@ -91,6 +97,7 @@ export function Component() {
     "gender",
     "jobType",
   ];
+  const formFields2 = ["bank", "accountName", "accountNumber"];
 
   const onFormSubmit = async (data: FieldValues) => {
     fetcher.submit(data, { method: "post" });
@@ -113,7 +120,7 @@ export function Component() {
           method="post"
           action="/employees/new"
           onSubmit={handleSubmit(onFormSubmit)}
-          className="flex flex-col min-h-[calc(100vh-200px)] justify-between"
+          className="flex flex-col min-h-[calc(100vh-220px)] justify-between"
         >
           <div className="grid md:grid-cols-3 gap-8">
             <div>
@@ -208,6 +215,34 @@ export function Component() {
                 validate={(value) => validateField(value, "Role is required")}
                 isRequired
               />
+            </div>
+            <div>
+              {inputFields
+                .filter((item) => formFields2.includes(item.name))
+                .map(
+                  ({
+                    type,
+                    id,
+                    name,
+                    label,
+                    placeholder,
+                    validate,
+                    isRequired,
+                  }) => (
+                    <TextField
+                      type={type}
+                      id={id}
+                      name={name}
+                      register={register}
+                      label={label}
+                      placeholder={placeholder}
+                      key={id}
+                      errors={errors}
+                      validate={(value) => validate(value) || undefined}
+                      isRequired={isRequired}
+                    />
+                  )
+                )}
             </div>
           </div>
           <div className="flex flex-col md:flex-row-reverse gap-6 items-center">

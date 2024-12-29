@@ -16,6 +16,8 @@ import {
   verifyLoginToken,
 } from "../services/auth.service.js";
 import { generateRandomUniqueId } from "../utils/generateRandomId.js";
+import Leave from "../models/leave.js";
+import { updateEmployeeLeaveStatus } from "../services/leave.service.js";
 
 const cookieOptions = {
   httpOnly: true, // Prevents client-side access to the cookie
@@ -38,6 +40,9 @@ export const register = tryCatch(async (req, res, next) => {
     dateOfBirth,
     jobType,
     jobTitle,
+    bank,
+    accountNumber,
+    accountName,
   } = req.body;
   if (
     !email ||
@@ -48,7 +53,10 @@ export const register = tryCatch(async (req, res, next) => {
     !phone ||
     !role ||
     !gender ||
-    !dateOfBirth
+    !dateOfBirth ||
+    !bank ||
+    !accountNumber ||
+    !accountName
   ) {
     return next(createHttpError(400, "Please fill all form fields"));
   }
@@ -76,8 +84,13 @@ export const register = tryCatch(async (req, res, next) => {
     jobType,
     jobTitle,
     employeeId: generateRandomUniqueId(),
+    bank,
+    accountNumber,
+    accountName,
   });
   const employeeCreated = await createEmployee(employee);
+  clearCache("employees");
+  clearCache("allEmployees");
   res.status(201).json({
     employeeCreated,
     msg: "Registration success",
@@ -97,6 +110,8 @@ export const login = tryCatch(async (req, res, next) => {
   if (!isPasswordValid) {
     return next(createHttpError(401, "Invalid email or password"));
   }
+  employee.lastLogin = new Date();
+  await employee.save();
   const accessToken = generateAccessToken(employee._id, employee.role);
   const refreshToken = generateRefreshToken(employee._id, employee.role);
   res.cookie("refreshToken", refreshToken, cookieOptions);
@@ -109,10 +124,11 @@ export const login = tryCatch(async (req, res, next) => {
 export const authenticateEmployee = tryCatch(async (req, res, next) => {
   const { id } = req.user;
   const employee = await Employee.findById(id);
+  const leaves = await Leave.find({ employee: id });
+  await updateEmployeeLeaveStatus(leaves, employee);
   if (!employee) {
     return next(createHttpError(404, "User not found"));
   }
-  // clearCache(`auth_user_${req.user.id}`);
   res.status(200).json(employee);
 });
 
@@ -154,7 +170,7 @@ export const verifyLoginLink = tryCatch(async (req, res, next) => {
   });
 });
 
-export const verifyEmail = tryCatch(async (req, res, next) => {
+export const verifyEmail = tryCatch(async (req, res) => {
   const { userId, verificationToken } = req.params;
   if (!userId || !verificationToken) {
     throw createHttpError(400, "UserId or verificationToken not provided");
@@ -220,6 +236,7 @@ export const logout = tryCatch(async (req, res, next) => {
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
   });
+  clearCache(null, true);
   res.status(200).json({
     msg: "Logged out successfully",
   });

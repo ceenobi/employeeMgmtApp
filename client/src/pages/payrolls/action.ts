@@ -87,8 +87,6 @@ export const handlePayrollActions = async (
       };
     }
     if (request.method === "POST") {
-      // const payroll = Object.fromEntries(formData);
-      // const payrollData = payroll as unknown as PayrollFormData;
       const res = await generatePayrolls(token);
       return {
         status: res.status,

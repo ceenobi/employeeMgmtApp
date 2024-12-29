@@ -42,8 +42,14 @@ export const cacheMiddleware =
     }
   };
 
-export const clearCache = (pattern) => {
+export const clearCache = (pattern = null, clearAll = false) => {
   const keys = cache.keys();
+  if (clearAll) {
+    keys.forEach((key) => cache.del(key));
+    console.log(`Cleared all cache entries`);
+    return;
+  }
+  // Filter keys based on the provided pattern
   const matchingKeys = pattern
     ? keys.filter((key) => key.includes(pattern))
     : keys;
@@ -51,3 +57,13 @@ export const clearCache = (pattern) => {
   matchingKeys.forEach((key) => cache.del(key));
   console.log(`Cleared ${matchingKeys.length} cache entries`);
 };
+
+// export const clearCache = (pattern) => {
+//   const keys = cache.keys();
+//   const matchingKeys = pattern
+//     ? keys.filter((key) => key.includes(pattern))
+//     : keys;
+
+//   matchingKeys.forEach((key) => cache.del(key));
+//   console.log(`Cleared ${matchingKeys.length} cache entries`);
+// };
