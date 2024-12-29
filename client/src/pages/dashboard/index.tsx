@@ -96,7 +96,7 @@ export function Component() {
               title="Staff Strength"
               count={employeeCount}
               icon={<UsersRound />}
-              desc={`${employeesPercentage.toFixed(2)}% hires for the month`}
+              desc={`${employeesPercentage.toFixed(0)}% hires for the month`}
             />
           </Suspense>
           <Suspense fallback={<div>Loading...</div>}>

@@ -109,10 +109,14 @@ export const searchTasks = tryCatch(async (req, res, next) => {
   const dueDate = req.query.dueDate ? new Date(req.query.dueDate) : null;
 
   if (!query && !startDate && !dueDate) {
-    return next(createHttpError(400, "At least one search criterion is required"));
+    return next(
+      createHttpError(400, "At least one search criterion is required")
+    );
   }
 
-  const sanitizeQuery = query ? query.toLowerCase().replace(/[^\w\s]/gi, "") : null;
+  const sanitizeQuery = query
+    ? query.toLowerCase().replace(/[^\w\s]/gi, "")
+    : null;
 
   const filter = {
     ...(sanitizeQuery && { $text: { $search: sanitizeQuery } }),
@@ -140,5 +144,31 @@ export const searchTasks = tryCatch(async (req, res, next) => {
       totalTasks: totalCount,
       hasMore: skip + tasks.length < totalCount,
     },
+  });
+});
+
+export const updateTaskStatus = tryCatch(async (req, res, next) => {
+  const { id: userId } = req.user;
+  const { id: taskId } = req.params;
+  if (!taskId) return next(createHttpError(400, "Task id is required"));
+  const task = await Task.findById(taskId);
+  if (!task) {
+    return next(createHttpError(404, "Task not found"));
+  }
+  if (task.createdBy.toString() !== userId) {
+    return next(
+      createHttpError(403, "You are not authorized to update this task")
+    );
+  }
+  const updatedTask = await Task.findByIdAndUpdate(
+    taskId,
+    { status: req.body.status },
+    { new: true }
+  );
+  clearCache("getTasks");
+  clearCache("getTask");
+  res.status(200).json({
+    msg: "Task status updated successfully",
+    task: updatedTask,
   });
 });

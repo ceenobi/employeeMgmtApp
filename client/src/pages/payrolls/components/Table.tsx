@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import { ActionButton, Alert, Modal, SelectField } from "@/components";
 import { PayrollFormData, Userinfo } from "@/emply-types";
 import { formatCurrency, formatDate } from "@/utils/format";
@@ -63,6 +61,7 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
       toast.success(fetcher.data?.msg);
       setIsOpenDelete(false);
       setIsOpen(false);
+      setSelectedPayroll(null);
       reset();
       navigate("/payrolls", { replace: true });
     }
@@ -193,7 +192,7 @@ export default function Table({ payrolls, userInfo }: PayrollProps) {
             </div>
           );
         default:
-          return cellValue;
+          return ""
       }
     },
     [userInfo?.role]

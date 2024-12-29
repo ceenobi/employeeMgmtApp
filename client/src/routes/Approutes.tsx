@@ -31,7 +31,7 @@ import { getLatestPayrollData, getPayrollData } from "@/pages/payrolls/queries";
 import { getAnEmployee, getEmployees } from "@/pages/employees/queries";
 import {
   createTaskAction,
-  deleteTaskAction,
+  updateStatusOrDeleteTaskAction,
   updateTaskAction,
 } from "@/pages/tasks/action";
 import { getSingleTask, getTasksData, searchTask } from "@/pages/tasks/queries";
@@ -162,7 +162,8 @@ export default function AppRoutes() {
           path: "tasks",
           lazy: () => import("@/pages/tasks"),
           loader: ({ request }) => getTasksData({ request, token }),
-          action: ({ request }) => deleteTaskAction({ request }, token),
+          action: ({ request }) =>
+            updateStatusOrDeleteTaskAction({ request }, token),
           children: [
             {
               path: "new",
@@ -177,10 +178,10 @@ export default function AppRoutes() {
               action: ({ request }) => updateTaskAction({ request }, token),
             },
             {
-              path:"search",
-              lazy:()=> import("@/pages/tasks/Search"), 
+              path: "search",
+              lazy: () => import("@/pages/tasks/Search"),
               loader: ({ request }) => searchTask({ request, token }),
-            }
+            },
           ],
         },
         {

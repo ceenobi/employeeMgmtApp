@@ -1,16 +1,19 @@
-import { ActionButton, Alert, Modal } from "@/components";
+import { ActionButton, Alert, Modal, SelectField } from "@/components";
 import { TaskFormData, Userinfo } from "@/emply-types";
 import { useAuthProvider } from "@/store/authProvider";
 import {
   taskPriorityColors,
   taskProgress,
   taskProgressColors,
+  taskStatus,
   taskStatusColors,
 } from "@/utils/constants";
 import { formatDate } from "@/utils/format";
+import { validateField } from "@/utils/formValidate";
 import handleError from "@/utils/handleError";
-import { Paperclip } from "lucide-react";
+import { FilePenLine, Paperclip } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { FieldValues, useForm } from "react-hook-form";
 import { Form, Link, useFetcher, useNavigate } from "react-router";
 import { toast } from "sonner";
 
@@ -39,11 +42,19 @@ export default function Table({ filteredTasks }: TasksProps) {
   const { user } = useAuthProvider() as {
     user: Userinfo;
   };
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     if (fetcher.data?.status === 200) {
       toast.success(fetcher.data?.msg);
       setIsOpenDelete(false);
+      setIsOpen(false);
+      setSelectedTask(null)
       navigate("/tasks", { replace: true });
     }
     if (fetcher.data?.error) {
@@ -54,21 +65,36 @@ export default function Table({ filteredTasks }: TasksProps) {
     }
   }, [fetcher.data, navigate]);
 
+  useEffect(() => {
+    if (selectedTask) {
+      setValue("status", selectedTask.status);
+    }
+  }, [selectedTask, setValue]);
+
   const handleOpenModal = (task: TaskFormData) => {
     setSelectedTask(task);
     setIsOpen(true);
+    setError("");
   };
   const handleCloseModal = () => {
     setSelectedTask(null);
     setIsOpen(false);
+    setError("");
   };
   const handleOpenDeleteModal = (task: TaskFormData) => {
     setSelectedTask(task);
     setIsOpenDelete(true);
+    setError("");
   };
   const handleCloseDeleteModal = () => {
     setSelectedTask(null);
     setIsOpenDelete(false);
+    setError("");
+  };
+
+  const handleTagClick = (tag: string) => {
+    navigate(`/tasks/search?query=${tag}`);
+    setIsOpen(false);
   };
 
   const deleteTask = useCallback(async () => {
@@ -79,6 +105,19 @@ export default function Table({ filteredTasks }: TasksProps) {
       }
     );
   }, [fetcher, selectedTask?._id]);
+
+  const onFormSubmit = useCallback(
+    async (formData: FieldValues) => {
+      fetcher.submit(
+        {
+          ...formData,
+          _id: selectedTask?._id as string,
+        },
+        { method: "patch" }
+      );
+    },
+    [fetcher, selectedTask?._id]
+  );
 
   const renderCell = useCallback(
     (task: TaskFormData, columnKey: React.Key) => () => {
@@ -147,7 +186,8 @@ export default function Table({ filteredTasks }: TasksProps) {
               <div
                 className="progress-bar h-[20px]"
                 style={{
-                  width: taskProgress[task?.status as keyof typeof taskProgress],
+                  width:
+                    taskProgress[task?.status as keyof typeof taskProgress],
                   backgroundColor:
                     taskProgressColors[
                       task?.status as keyof typeof taskProgressColors
@@ -214,7 +254,20 @@ export default function Table({ filteredTasks }: TasksProps) {
         classname="max-w-2xl"
       >
         <>
-          <h1 className="mt-4 text-2xl font-bold">{selectedTask?.title}</h1>
+          {error && <Alert error={error} />}
+          <div className="mt-4 flex justify-between items-center">
+            <h1 className="text-2xl font-bold">{selectedTask?.title}</h1>
+            {user?._id === selectedTask?.createdBy?._id && (
+              <Link
+                to={`/tasks/${selectedTask?._id}/edit`}
+                className="tooltip"
+                onClick={handleCloseModal}
+                data-tip="Edit task"
+              >
+                <FilePenLine />
+              </Link>
+            )}
+          </div>
           <div className="mt-4 flex items-center gap-2">
             <p>Priority:</p>
             <div
@@ -262,7 +315,11 @@ export default function Table({ filteredTasks }: TasksProps) {
               <p>Tags:</p>
               <div className="flex flex-wrap gap-2">
                 {selectedTask?.tags.map((tag) => (
-                  <div className="badge badge-primary" key={tag}>
+                  <div
+                    className="badge badge-primary cursor-pointer"
+                    key={tag}
+                    onClick={() => handleTagClick(tag)}
+                  >
                     #{tag}
                   </div>
                 ))}
@@ -333,21 +390,43 @@ export default function Table({ filteredTasks }: TasksProps) {
             </div>
           )}
           <div className="divider"></div>
-          <div className="modal-action items-center gap-4">
-            <button className="btn btn-info btn-sm" onClick={handleCloseModal}>
-              Close
-            </button>
+          <Form
+            className="my-4"
+            method="patch"
+            action="/tasks"
+            onSubmit={handleSubmit(onFormSubmit)}
+          >
             {user?._id === selectedTask?.createdBy?._id && (
-              <Link to={`/tasks/${selectedTask?._id}/edit`}>
-                <button
-                  className="btn btn-secondary btn-sm"
-                  onClick={handleCloseModal}
-                >
-                  Edit
-                </button>
-              </Link>
+              <SelectField
+                label="Update Task Status"
+                name="status"
+                id="status"
+                register={register}
+                errors={errors}
+                placeholder="Select status"
+                options={taskStatus}
+                validate={(value) => validateField(value, "Status is required")}
+                defaultValue={selectedTask?.status as string}
+                isRequired
+              />
             )}
-          </div>
+            <div className="modal-action items-center gap-4">
+              <ActionButton
+                type="button"
+                text="Close"
+                classname="w-fit btn btn-info btn-sm text-zinc-900"
+                onClick={handleCloseModal}
+              />
+              {user?._id === selectedTask?.createdBy?._id && (
+                <ActionButton
+                  type="submit"
+                  text="Update"
+                  classname="w-fit btn btn-secondary btn-sm h-[20px] text-zinc-900"
+                  loading={isSubmitting}
+                />
+              )}
+            </div>
+          </Form>
         </>
       </Modal>
       <Modal

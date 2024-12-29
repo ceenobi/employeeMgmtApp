@@ -1,4 +1,4 @@
-// import { useEffect } from "react";
+import { useEffect } from "react";
 import {
   isRouteErrorResponse,
   useLocation,
@@ -6,6 +6,7 @@ import {
   useRouteError,
 } from "react-router";
 import ActionButton from "./ActionButton";
+import { useAuthProvider } from "@/store/authProvider";
 
 interface ErrorResponse {
   data?: string;
@@ -27,6 +28,7 @@ export default function ErrorBoundary() {
   const location = useLocation();
   const error = useRouteError() as RouteErrorResponse;
   console.error("Error object:", error);
+  const {isAuthenticated} = useAuthProvider()
 
   const errorMessage: string =
     error?.data ||
@@ -38,12 +40,15 @@ export default function ErrorBoundary() {
   console.log("Error message:", errorMessage);
 
   const from = location.state?.from || "/";
-  const redirect = () => {
-    if (error?.status === 401) {
-      navigate(0);
-    } else {
-      navigate(from, { replace: true });
+
+  useEffect(() => {
+    if (error?.status === 401 && !isAuthenticated) {
+      navigate("/login", { replace: true });
     }
+  }, [error?.status, isAuthenticated, navigate]);
+
+  const redirect = () => {
+    navigate(from, { replace: true });
   };
 
   return (

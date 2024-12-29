@@ -6,6 +6,7 @@ import {
   updateTask,
   deleteTask,
   searchTasks,
+  updateTaskStatus,
 } from "../controllers/task.js";
 import { verifyAuth, Roles } from "../middleware.js/verifyAuth.js";
 import { cacheMiddleware } from "../config/cache.js";
@@ -33,4 +34,5 @@ router.get(
 );
 router.patch("/:id/update", verifyAuth(Roles.Admin), updateTask);
 router.delete("/delete/:id", verifyAuth(Roles.Admin), deleteTask);
+router.patch("/update-status/:id", verifyAuth(Roles.Admin), updateTaskStatus);
 export default router;

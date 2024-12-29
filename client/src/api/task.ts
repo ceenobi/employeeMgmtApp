@@ -58,3 +58,15 @@ export const searchTasks = async (
     }
   );
 };
+
+export const updateTaskStatus = async (
+  id: string,
+  formData: TaskFormData,
+  token: string
+) => {
+  return await axiosInstance.patch(`/tasks/update-status/${id}`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
