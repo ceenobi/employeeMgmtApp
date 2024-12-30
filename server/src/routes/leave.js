@@ -5,6 +5,7 @@ import {
   getALeave,
   getAllLeaves,
   getUserLeaves,
+  searchLeaves,
   updateLeave,
   updateLeaveStatus,
 } from "../controllers/leave.js";
@@ -25,6 +26,12 @@ router.get(
   verifyAuth(Roles.All),
   cacheMiddleware("userLeaves", 300),
   getUserLeaves
+);
+router.get(
+  "/search",
+  verifyAuth(Roles.All),
+  cacheMiddleware("searchLeaves", 300),
+  searchLeaves
 );
 router.get(
   "/:id",

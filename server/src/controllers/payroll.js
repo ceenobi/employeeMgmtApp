@@ -171,3 +171,49 @@ export const getPayroll = tryCatch(async (req, res, next) => {
   }
   res.status(200).json(payroll);
 });
+
+export const searchPayroll = tryCatch(async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  const query = req.query.q;
+  const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
+  const dueDate = req.query.dueDate ? new Date(req.query.dueDate) : null;
+
+  if (!query && !startDate && !dueDate) {
+    return next(
+      createHttpError(400, "At least one search criterion is required")
+    );
+  }
+
+  const sanitizeQuery = query
+    ? query.toLowerCase().replace(/[^\w\s]/gi, "")
+    : null;
+
+  const filter = {
+    ...(sanitizeQuery && { $text: { $search: sanitizeQuery} }),
+    ...(startDate && { startDate: { $gte: startDate } }),
+    ...(dueDate && { dueDate: { $lte: dueDate } }),
+  };
+
+  const payrolls = await Payroll.find(filter)
+    .populate("userId", "firstName lastName photo")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  if (!payrolls) {
+    return next(createHttpError(404, "Search results not found"));
+  }
+
+  const totalCount = await Payroll.countDocuments(filter);
+  res.status(200).json({
+    payrolls, 
+    pagination: {
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+      totalPayrolls: totalCount,
+      hasMore: skip + payrolls.length < totalCount,
+    },
+  });
+});

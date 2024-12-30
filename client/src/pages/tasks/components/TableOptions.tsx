@@ -5,10 +5,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
 type TableOptionsProps = {
-//   getDueDates?: {
-//     date: Date;
-//     index: number;
-//   }[];
+  //   getDueDates?: {
+  //     date: Date;
+  //     index: number;
+  //   }[];
   selectPriority: string;
   setSelectPriority: (value: string) => void;
   selectProgress: string;
@@ -49,23 +49,24 @@ export default function TableOptions({
     setSelectPriority("");
     setSelectProgress("");
     setSelectDue("");
-  }, [setSelectDue, setSelectPriority, setSelectProgress]);
+    setIsSearch(false);
+    navigate("/tasks");
+  }, [navigate, setSelectDue, setSelectPriority, setSelectProgress]);
 
   useEffect(() => {
     sessionStorage.setItem("isSearch", JSON.stringify(isSearch));
   }, [isSearch]);
 
   useEffect(() => {
-    if (selectPriority === "") return;
-    navigate(`/tasks/search?query=${selectPriority}`);
-    resetFilter();
-  }, [navigate, resetFilter, selectPriority]);
-
-  useEffect(() => {
-    if (selectProgress === "") return;
-    navigate(`/tasks/search?query=${selectProgress}`);
-    resetFilter();
-  }, [navigate, resetFilter, selectProgress]);
+    if (isSearch) {
+      if (selectPriority) {
+        navigate(`/tasks/search?query=${selectPriority}`);
+      }
+      if (selectProgress) {
+        navigate(`/tasks/search?query=${selectProgress}`);
+      }
+    }
+  }, [isSearch, navigate, selectPriority, selectProgress]);
 
   return (
     <div className="mt-6 hidden lg:flex items-center justify-between bg-base-200 p-4 rounded-lg shadow-md gap-6">
@@ -73,9 +74,9 @@ export default function TableOptions({
         <input
           type="checkbox"
           className="toggle toggle-secondary tooltip tooltip-top mx-2"
-          checked={isSearch}
+          defaultChecked={isSearch}
           onClick={() => setIsSearch(!isSearch)}
-          id="toggle-sidebar"
+          id="toggle-search"
           data-tip={isSearch ? "Toggle Filter" : "Toggle Search"}
         />
         <h1>{isSearch ? "Search" : "Filter"}</h1>
@@ -91,7 +92,7 @@ export default function TableOptions({
               <option disabled value="">
                 Search Priority
               </option>
-              {taskPriority.map((item, index) => (
+              {taskPriority?.map((item, index) => (
                 <option key={index} value={item.value}>
                   {item.value}
                 </option>
@@ -105,7 +106,7 @@ export default function TableOptions({
               <option disabled value="">
                 Search Progress
               </option>
-              {Object.keys(taskProgress).map((item, index) => (
+              {Object.keys(taskProgress || {}).map((item, index) => (
                 <option key={index} value={item}>
                   {item}
                 </option>
@@ -122,7 +123,7 @@ export default function TableOptions({
               <option disabled value="">
                 Filter Priority
               </option>
-              {taskPriority.map((item, index) => (
+              {taskPriority?.map((item, index) => (
                 <option key={index} value={item.value}>
                   {item.value}
                 </option>
@@ -136,7 +137,7 @@ export default function TableOptions({
               <option disabled value="">
                 Filter Progress
               </option>
-              {Object.keys(taskProgress).map((item, index) => (
+              {Object.keys(taskProgress || {}).map((item, index) => (
                 <option key={index} value={item}>
                   {item}
                 </option>

@@ -27,7 +27,7 @@ import {
   handlePayrollActions,
   updatePayrollAction,
 } from "@/pages/payrolls/action";
-import { getLatestPayrollData, getPayrollData } from "@/pages/payrolls/queries";
+import { getLatestPayrollData, getPayrollData, searchPayrolls } from "@/pages/payrolls/queries";
 import { getAnEmployee, getEmployees } from "@/pages/employees/queries";
 import {
   createTaskAction,
@@ -46,12 +46,17 @@ import {
   getLeaveData,
   getLeavesData,
   getUserLeavesData,
+  searchLeave,
 } from "@/pages/leaves/queries";
 import {
   createEventAction,
   updateOrDeleteEventAction,
 } from "@/pages/events/action";
-import { getEventsData, getSingleEvent } from "@/pages/events/queries";
+import {
+  getEventsData,
+  getSingleEvent,
+  searchEvent,
+} from "@/pages/events/queries";
 import { getEmployeeSummaryData } from "@/pages/portal/queries";
 import { updatePasswordAction } from "@/pages/portal/password/action";
 import { useAuthProvider } from "@/store/authProvider";
@@ -156,6 +161,11 @@ export default function AppRoutes() {
                 getPayrollData(params.id ?? "payrollId", token),
               action: ({ request }) => updatePayrollAction({ request }, token),
             },
+            {
+              path: "search",
+              lazy: () => import("@/pages/payrolls/Search"),
+              loader: ({ request }) => searchPayrolls({ request, token }),
+            },
           ],
         },
         {
@@ -208,6 +218,11 @@ export default function AppRoutes() {
                 getLeaveData(params.id ?? "leaveId", token),
               action: ({ request }) => updateLeaveAction({ request }, token),
             },
+            {
+              path: "search",
+              lazy: () => import("@/pages/leaves/Search"),
+              loader: ({ request }) => searchLeave({ request, token }),
+            },
           ],
         },
         {
@@ -227,6 +242,11 @@ export default function AppRoutes() {
                 getSingleEvent(params.id ?? "eventId", token),
               action: ({ request }) =>
                 updateOrDeleteEventAction({ request }, token),
+            },
+            {
+              path: "search",
+              lazy: () => import("@/pages/events/Search"),
+              loader: ({ request }) => searchEvent({ request, token }),
             },
           ],
         },

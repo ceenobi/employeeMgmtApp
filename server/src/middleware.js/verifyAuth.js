@@ -23,7 +23,7 @@ export const verifyAuth =
       req.user = decodedToken;
       next();
     } catch (error) {
-      return next(createHttpError(401, "Session expired, pls login "));
+      return next(createHttpError(401, "An unknown error has occured"));
     }
   };
 

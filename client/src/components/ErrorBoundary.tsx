@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   isRouteErrorResponse,
   useLocation,
@@ -28,7 +27,7 @@ export default function ErrorBoundary() {
   const location = useLocation();
   const error = useRouteError() as RouteErrorResponse;
   console.error("Error object:", error);
-  const {isAuthenticated} = useAuthProvider()
+  const { isAuthenticated } = useAuthProvider();
 
   const errorMessage: string =
     error?.data ||
@@ -41,13 +40,10 @@ export default function ErrorBoundary() {
 
   const from = location.state?.from || "/";
 
-  useEffect(() => {
-    if (error?.status === 401 && !isAuthenticated) {
-      navigate("/login", { replace: true });
-    }
-  }, [error?.status, isAuthenticated, navigate]);
-
   const redirect = () => {
+    if (errorMessage === "Session expired, pls login" && isAuthenticated) {
+      navigate(0);
+    }
     navigate(from, { replace: true });
   };
 
@@ -58,8 +54,8 @@ export default function ErrorBoundary() {
         <div className="mt-4 text-center">
           <p className="text-xl text-sky-300">You have encountered an error</p>
           <div className="flex gap-2 justify-center">
-            {isRouteErrorResponse(error) && error.status && (
-              <p className="text-xl text-sky-300 font-bold">{`${error.status}`}</p>
+            {isRouteErrorResponse(error) && error?.status && (
+              <p className="text-xl text-sky-300 font-bold">{`${error?.status}`}</p>
             )}
             <p className="text-md text-sky-300 font-bold">{errorMessage}</p>
           </div>

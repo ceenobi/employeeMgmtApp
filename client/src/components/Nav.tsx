@@ -54,7 +54,7 @@ export default function Nav() {
     }
   }, 400);
 
-  const paths = ["/portal", "/departments"];
+  const paths = ["/portal", "/departments", "/employees"];
 
   return (
     <nav className="sticky top-0 z-40 bg-base-200 py-4 px-4 lg:px-6 border-b-2 border-b-gray-600">
@@ -77,7 +77,7 @@ export default function Nav() {
                 setInputValue(e.target.value);
                 handleSearch(e);
               }}
-              disabled={paths.some((path) =>
+              disabled={location.pathname === "/" || paths.some((path) =>
                 location.pathname.startsWith(path)
               )}
             />
@@ -112,7 +112,7 @@ export default function Nav() {
                 <p className="font-semibold">
                   {user?.firstName.concat(" ", user?.lastName)}
                 </p>
-                <p className="text-sm">{user?.jobTitle || user?.role}</p>
+                <p className="text-sm">{user?.role}</p>
               </div>
             </div>
           </div>

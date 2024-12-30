@@ -152,3 +152,54 @@ export const deleteLeave = tryCatch(async (req, res, next) => {
   clearCache("getALeave");
   res.status(200).json({ msg: "Leave deleted successfully" });
 });
+
+export const searchLeaves = tryCatch(async (req, res, next) => {
+  const { id: userId } = req.user;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  const query = req.query.q;
+  const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
+  const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
+
+  if (!query && !startDate && !endDate) {
+    return next(createHttpError(400, "At least one search criterion is required"));
+  }
+
+  const sanitizeQuery = query
+    ? query.toLowerCase().replace(/[^\w\s]/gi, "")
+    : null;
+
+  const filter = {
+    ...(sanitizeQuery && { $text: { $search: sanitizeQuery } }),
+    ...(startDate && { startDate: { $gte: startDate } }),
+    ...(endDate && { endDate: { $lte: endDate } }),
+  };
+
+  // Check user role
+  const roles = ["admin", "super-admin"];
+  if (!roles.includes(req.user.role)) {
+    // If the user is not an admin or super-admin, filter by employee ID
+    filter["employee"] = userId;
+  }
+
+  const leaves = await Leave.find(filter)
+    .populate("employee", "firstName lastName photo")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  if (!leaves) {
+    return next(createHttpError(404, "Search results not found"));
+  }
+  const totalCount = await Leave.countDocuments(filter);
+  res.status(200).json({
+    leaves,
+    pagination: {
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+      totalLeaves: totalCount,
+      hasMore: skip + leaves.length < totalCount,
+    },
+  });
+});

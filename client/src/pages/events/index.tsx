@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { Link, Outlet, useLoaderData, useMatch } from "react-router";
 import { Suspense, lazy, useMemo, useState } from "react";
-import { eventStatus } from "@/utils/constants";
+import EventOptions from "./components/EventOptions";
 const EventCard = lazy(() => import("./components/EventCard"));
 
 export function Component() {
@@ -22,9 +22,6 @@ export function Component() {
     };
   };
   const { events, pagination } = data?.data ?? {};
-  const resetFilter = () => {
-    setSelectStatus("");
-  };
 
   const filteredEvents = useMemo(() => {
     if (!selectStatus) {
@@ -54,31 +51,10 @@ export function Component() {
                 </button>
               </Link>
             </div>
-            <div className="mt-6 hidden lg:flex items-center bg-base-200 p-4 rounded-lg shadow-md gap-6">
-              <h1 className="font-bold">Filter:</h1>
-              <div className="flex flex-wrap gap-6 items-center w-full">
-                <select
-                  className="select select-sm select-secondary w-full max-w-[150px]"
-                  value={selectStatus}
-                  onChange={(e) => setSelectStatus(e.target.value)}
-                >
-                  <option disabled value="">
-                    Filter Status
-                  </option>
-                  {eventStatus.map((item, index) => (
-                    <option key={index} value={item.value}>
-                      {item.value}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={resetFilter}
-                  className="btn btn-sm btn-secondary"
-                >
-                  Reset
-                </button>
-              </div>
-            </div>
+            <EventOptions
+              selectStatus={selectStatus}
+              setSelectStatus={setSelectStatus}
+            />
             {events.length > 0 ? (
               <div className="flex flex-col min-h-[calc(100vh-220px)] justify-between">
                 <Suspense fallback={<div>Loading...</div>}>

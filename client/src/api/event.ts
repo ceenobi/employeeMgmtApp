@@ -44,3 +44,19 @@ export const updateEvent = async (
     },
   });
 };
+
+
+export const searchEvents = async (
+  searchQuery: string,
+  page: string | number,
+  token: string
+) => {
+  return await axiosInstance.get(
+    `/events/get/search?q=${searchQuery}&page=${page}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};

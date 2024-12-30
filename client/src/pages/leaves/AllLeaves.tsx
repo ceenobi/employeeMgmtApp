@@ -3,8 +3,8 @@ import { LeaveFormData, Userinfo } from "@/emply-types";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useNavigate } from "react-router";
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
-import { leaveStatus, leaveType } from "@/utils/constants";
 import { useAuthProvider } from "@/store/authProvider";
+import LeaveOptions from "./components/LeaveOptions";
 const Table = lazy(() => import("./components/Table"));
 
 export function Component() {
@@ -36,11 +36,6 @@ export function Component() {
     }
   }, [navigate, user?.role]);
 
-  const resetFilter = () => {
-    setSelectLeaveType("");
-    setSelectLeaveStatus("");
-  };
-
   const filteredLeaves = useMemo(() => {
     if (!selectLeaveType && !selectLeaveStatus) {
       return leaves;
@@ -66,44 +61,14 @@ export function Component() {
       </Helmet>
       <>
         <h1 className="font-bold px-2 mb-6">Leave records</h1>
-        <div className="mt-6 hidden lg:flex items-center bg-base-200 p-4 rounded-lg shadow-md gap-6">
-          <h1 className="font-bold">Filter:</h1>
-          <div className="flex flex-wrap gap-6 items-center w-full">
-            <select
-              className="select select-sm select-secondary w-full max-w-[150px]"
-              value={selectLeaveType}
-              onChange={(e) => setSelectLeaveType(e.target.value)}
-            >
-              <option disabled value="">
-                Filter Type
-              </option>
-              {leaveType.map((item, index) => (
-                <option key={index} value={item.value}>
-                  {item.value}
-                </option>
-              ))}
-            </select>
-            <select
-              className="select select-sm select-secondary w-full max-w-[150px]"
-              value={selectLeaveStatus}
-              onChange={(e) => setSelectLeaveStatus(e.target.value)}
-            >
-              <option disabled value="">
-                Filter Status
-              </option>
-              {Object.keys(leaveStatus).map((item, index) => (
-                <option key={index} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-            <button onClick={resetFilter} className="btn btn-sm btn-secondary">
-              Reset
-            </button>
-          </div>
-        </div>
+        <LeaveOptions
+          selectLeaveStatus={selectLeaveStatus}
+          setSelectLeaveStatus={setSelectLeaveStatus}
+          selectLeaveType={selectLeaveType}
+          setSelectLeaveType={setSelectLeaveType}
+        />
         {leaves?.length > 0 ? (
-          <div className="flex flex-col min-h-[calc(100vh-200px)] justify-between">
+          <div className="flex flex-col min-h-[calc(100vh-220px)] justify-between">
             <div>
               <Suspense fallback={<div>Loading...</div>}>
                 <Table leaves={filteredLeaves} user={user} roles={roles} />

@@ -4,8 +4,9 @@ import { Plus } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { Link, Outlet, useLoaderData, useMatch } from "react-router";
 import { lazy, Suspense, useMemo, useState } from "react";
-import { leaveStatus, leaveType } from "@/utils/constants";
 import { useAuthProvider } from "@/store/authProvider";
+import LeaveOptions from "./components/LeaveOptions";
+
 const Table = lazy(() => import("./components/Table"));
 
 export function Component() {
@@ -28,11 +29,11 @@ export function Component() {
   };
   const { leaves, pagination } = data?.data ?? {};
   const roles = ["admin", "super-admin"];
-  const resetFilter = () => {
-    setSelectLeaveType("");
-    setSelectLeaveStatus("");
-  };
-  
+  // const resetFilter = () => {
+  //   setSelectLeaveType("");
+  //   setSelectLeaveStatus("");
+  // };
+
   const filteredLeaves = useMemo(() => {
     if (!selectLeaveType && !selectLeaveStatus) {
       return leaves;
@@ -67,12 +68,18 @@ export function Component() {
                 </button>
               </Link>
             </div>
-            <div className="mt-6 hidden lg:flex items-center justify-between bg-base-200 p-4 rounded-lg shadow-md gap-6 w-full">
+            <LeaveOptions
+              selectLeaveStatus={selectLeaveStatus}
+              setSelectLeaveStatus={setSelectLeaveStatus}
+              selectLeaveType={selectLeaveType}
+              setSelectLeaveType={setSelectLeaveType}
+            />
+            {/* <div className="mt-6 hidden lg:flex items-center justify-between bg-base-200 p-4 rounded-lg shadow-md gap-6 w-full">
               <h1 className="font-bold">
                 Leave count: <span>({user?.leaveCount})</span>
               </h1>
-              <div className="flex flex-wra gap-6 items-center justify-cente">
-                <h1 className="font-bold">Sort:</h1>
+              <div className="flex items-center gap-6">
+                <h1 className="font-bold">Filter:</h1>
                 <select
                   className="select select-sm select-secondary w-full max-w-[150px]"
                   value={selectLeaveType}
@@ -117,7 +124,7 @@ export function Component() {
                   Approve leaves requests
                 </Link>
               )}
-            </div>
+            </div> */}
             {leaves?.length > 0 ? (
               <div className="flex flex-col min-h-[calc(100vh-220px)] justify-between">
                 <Suspense fallback={<div>Loading...</div>}>

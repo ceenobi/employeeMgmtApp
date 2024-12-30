@@ -135,19 +135,46 @@ export const updateEmployeeLeaveStatus = async (leaves, employee) => {
       let endDateObj = dayjs(leave.endDate);
       let currentDate = dayjs();
       if (!employee) return leave;
-      if (startDateObj.isAfter(currentDate, "minute")) {
-        employee.status = "active";
-      } else if (!endDateObj.isAfter(currentDate, "minute")) {
-        employee.status = "leave";
-      } else if (leave.status === "approved") {
-        if (endDateObj.isBefore(currentDate, "minute")) {
+      if (leave.status === "approved") {
+        if (startDateObj.isAfter(currentDate, "day")) {
           employee.status = "active";
-        } else {
+        } else if (endDateObj.isAfter(currentDate, "day")) {
+          employee.status = "active";
+        } else if (
+          startDateObj.isSame(currentDate, "day") ||
+          endDateObj.isSame(currentDate, "day")
+        ) {
           employee.status = "leave";
+        } else if (
+          startDateObj.isSame(currentDate, "day") &&
+          endDateObj.isBefore(currentDate, "day")
+        ) {
+          employee.status = "leave";
+        } else if (endDateObj.isBefore(currentDate, "day")) {
+          employee.status = "active";
         }
       } else if (leave.status === "rejected") {
         employee.status = "active";
+      } else if (leave.status === "pending") {
+        if (endDateObj.isBefore(currentDate, "day")) {
+          leave.status = "cancelled";
+        }
       }
+      // if (startDateObj.isAfter(currentDate, "day")) {
+      //   employee.status = "active";
+      // } else if (!endDateObj.isAfter(currentDate, "day")) {
+      //   employee.status = "leave";
+      // } else if (endDateObj.isBefore(currentDate, "day")) {
+      //   employee.status = "active";
+      // } else if (leave.status === "approved") {
+      //   if (endDateObj.isBefore(currentDate, "day")) {
+      //     employee.status = "active";
+      //   } else {
+      //     employee.status = "leave";
+      //   }
+      // } else if (leave.status === "rejected") {
+      //   employee.status = "active";
+      // }
       await employee.save();
       await leave.save();
       return leave;
@@ -155,4 +182,3 @@ export const updateEmployeeLeaveStatus = async (leaves, employee) => {
   );
   return updatedLeaves;
 };
-

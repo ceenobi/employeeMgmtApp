@@ -103,3 +103,49 @@ export const deleteEvent = tryCatch(async (req, res, next) => {
   clearCache("events");
   res.status(200).json({ msg: "Event deleted successfully" });
 });
+
+export const searchEvents = tryCatch(async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  const query = req.query.q;
+  const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
+  const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
+
+  if (!query && !startDate && !endDate) {
+    return next(
+      createHttpError(400, "At least one search criterion is required")
+    );
+  }
+
+  const sanitizeQuery = query
+    ? query.toLowerCase().replace(/[^\w\s]/gi, "")
+    : null;
+
+  const filter = {
+    ...(sanitizeQuery && { $text: { $search: sanitizeQuery } }),
+    ...(startDate && { startDate: { $gte: startDate } }),
+    ...(endDate && { endDate: { $lte: endDate } }),
+  };
+
+  const events = await Event.find(filter)
+    .populate("employee", "firstName lastName photo")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  if (!events) {
+    return next(createHttpError(404, "Search results not found"));
+  }
+
+  const totalCount = await Event.countDocuments(filter);
+  res.status(200).json({
+    events,
+    pagination: {
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+      totalEvents: totalCount,
+      hasMore: skip + events.length < totalCount,
+    },
+  });
+});

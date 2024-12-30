@@ -70,3 +70,18 @@ export const generatePayrolls = async (token: string) => {
     },
   });
 };
+
+export const searchPayroll = async (
+  searchQuery: string,
+  page: string | number,
+  token: string
+) => {
+  return await axiosInstance.get(
+    `/payrolls/get/search?q=${searchQuery}&page=${page}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};

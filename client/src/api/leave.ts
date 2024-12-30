@@ -64,3 +64,18 @@ export const deleteLeave = async (id: string, token: string) => {
     },
   });
 };
+
+export const searchLeaves = async (
+  searchQuery: string,
+  page: string | number,
+  token: string
+) => {
+  return await axiosInstance.get(
+    `/leaves/search?q=${searchQuery}&page=${page}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};

@@ -681,12 +681,14 @@ export const leaveStatus = {
   pending: "badge-secondary",
   approved: "badge-success",
   rejected: "badge-error",
+  cancelled: "badge-info",
 };
 
 export const updateLeaveStatus = [
   { value: "pending" },
   { value: "approved" },
   { value: "rejected" },
+  { value: "cancelled" },
 ];
 
 export const eventStatus = [

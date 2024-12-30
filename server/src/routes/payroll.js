@@ -8,6 +8,7 @@ import {
   getLatestPayroll,
   deletePayroll,
   updatePayroll,
+  searchPayroll,
 } from "../controllers/payroll.js";
 import { verifyAuth, Roles } from "../middleware.js/verifyAuth.js";
 import { cacheMiddleware } from "../config/cache.js";
@@ -34,6 +35,12 @@ router.get(
   verifyAuth(Roles.Admin),
   cacheMiddleware("latestPayroll", 300),
   getLatestPayroll
+);
+router.get(
+  "/get/search",
+  verifyAuth(Roles.Admin),
+  cacheMiddleware("getPayrolls", 300),
+  searchPayroll
 );
 router.delete("/:id", verifyAuth(Roles.Admin), deletePayroll);
 router.patch("/update/:id", verifyAuth(Roles.Admin), updatePayroll);

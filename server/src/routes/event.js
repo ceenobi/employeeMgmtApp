@@ -4,6 +4,7 @@ import {
   deleteEvent,
   getAllEvents,
   getEvent,
+  searchEvents,
   updateEvent,
 } from "../controllers/event.js";
 import { verifyAuth, Roles } from "../middleware.js/verifyAuth.js";
@@ -23,6 +24,12 @@ router.get(
   verifyAuth(Roles.All),
   cacheMiddleware("single-event", 300),
   getEvent
+);
+router.get(
+  "/get/search",
+  verifyAuth(Roles.All),
+  cacheMiddleware("search-events", 300),
+  searchEvents
 );
 router.patch("/:id/update", verifyAuth(Roles.All), updateEvent);
 router.delete("/delete/:id", verifyAuth(Roles.All), deleteEvent);

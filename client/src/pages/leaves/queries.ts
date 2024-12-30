@@ -1,4 +1,4 @@
-import { getLeave, getLeaves, getUserLeaves } from "@/api/leave";
+import { getLeave, getLeaves, getUserLeaves, searchLeaves } from "@/api/leave";
 import { QueryClient } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
@@ -40,6 +40,23 @@ export const getLeaveData = async (leaveId: string, token: string) => {
   return await queryClient.fetchQuery({
     queryKey: ["leave", leaveId],
     queryFn: () => getLeave(leaveId, token),
+  });
+};
+
+export const searchLeave = async ({
+  request,
+  token,
+}: {
+  request: Request;
+  token: string;
+}) => {
+  if (!token) return null;
+  const searchParams = new URL(request.url).searchParams;
+  const searchTerm = searchParams.get("query") as string;
+  const page = searchParams.get("page") || 1;
+  return await queryClient.fetchQuery({
+    queryKey: ["search-leave", searchTerm, page],
+    queryFn: () => searchLeaves(searchTerm, page, token),
   });
 };
 
