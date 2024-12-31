@@ -18,7 +18,7 @@ function App() {
       if (token) {
         await checkAuth(token);
       }
-      if (!isAuthenticated) {
+      if (token && !isAuthenticated) {
         await refreshToken(token as string);
       }
       setLoading(false);
