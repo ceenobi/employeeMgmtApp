@@ -41,11 +41,20 @@ export const validateTask = (task) => {
     file: Joi.string().allow("").optional(),
     fileId: Joi.string().optional(),
     status: Joi.string()
-      .valid("planned", "inprogress", "completed", "postponed", "cancelled")
+      .valid(
+        "planned",
+        "started",
+        "inprogress",
+        "halfwayPast",
+        "completed",
+        "postponed",
+        "cancelled",
+        "overdue"
+      )
       .required(),
     priority: Joi.string().valid("low", "medium", "high").required(),
     tags: Joi.string().allow("").optional(),
-    members: Joi.string().optional(),
+    members: Joi.string().allow("").optional(),
     comments: Joi.array()
       .items(
         Joi.object({

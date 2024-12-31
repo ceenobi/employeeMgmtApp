@@ -6,6 +6,9 @@ import {
   deleteFromCloudinary,
   uploadToCloudinary,
 } from "../config/cloudinary.js";
+import pusher from "../config/notification.js";
+import dayjs from "dayjs";
+import Notification from "../models/notifications.js";
 
 export const createTaskService = async (userId, req) => {
   let uploadResults;
@@ -15,11 +18,16 @@ export const createTaskService = async (userId, req) => {
     });
     uploadResults = uploadResult;
   }
-  const membersIds = req.body.members
-    .split(",")
-    .map((id) => mongoose.Types.ObjectId.createFromHexString(id.trim()));
+  let assignedMembers;
+  if (req.body.members === "") {
+    assignedMembers = [];
+  } else {
+    const membersIds = req.body.members
+      .split(",")
+      .map((id) => mongoose.Types.ObjectId.createFromHexString(id.trim()));
+    assignedMembers = await Employee.find({ _id: { $in: membersIds } });
+  }
   const tags = req.body.tags.split(",");
-  const assignedMembers = await Employee.find({ _id: { $in: membersIds } });
   const task = await Task.create({
     ...req.body,
     members: assignedMembers,
@@ -28,6 +36,17 @@ export const createTaskService = async (userId, req) => {
     file: uploadResults?.url,
     fileId: uploadResults?.public_id,
   });
+  // Trigger Pusher notification
+  pusher.trigger("task-channel", "new-task", {
+    taskId: task._id,
+    message: `New task created: ${task.title}`,
+  });
+  const notification = new Notification({
+    message: `New task created: ${task.title}`,
+    type: "task",
+    notificationId: `task-${task._id}`,
+  });
+  await notification.save();
   const sendMembersMail = assignedMembers.map((member) => {
     return mailService({
       from: process.env.EMAIL,
@@ -83,3 +102,47 @@ export const updateTaskService = async (task, req) => {
   );
   return updatedTask;
 };
+
+export const trackTaskStatus = async (tasks) => {
+  const updatedTasks = await Promise.all(
+    tasks.map(async (task) => {
+      if (!task || !task.dueDate) return task;
+
+      const dueDateObj = dayjs(task.dueDate);
+      const currentDate = dayjs();
+      if (
+        dueDateObj.isBefore(currentDate, "day") &&
+        task.status !== "completed"
+      ) {
+        task.status = "overdue";
+      }
+      try {
+        await task.save();
+      } catch (error) {
+        console.error(`Failed to save task ${task._id}:`, error);
+      }
+
+      return task;
+    })
+  );
+
+  return updatedTasks;
+};
+
+// export const trackTaskStatus = async (tasks) => {
+//   const updatedTasks = await Promise.all(
+//     tasks.map(async (task) => {
+//       const dueDateObj = dayjs(task.dueDate);
+//       const currentDate = dayjs();
+//       if (
+//         dueDateObj.isBefore(currentDate, "day") &&
+//         task.status !== "completed"
+//       ) {
+//         task.status = "overdue";
+//       }
+//       await task.save();
+//       return task;
+//     })
+//   );
+//   return updatedTasks;
+// };

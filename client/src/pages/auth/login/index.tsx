@@ -46,6 +46,9 @@ export function Component() {
     if (getEmail && getRemember) {
       setValue("email", JSON.parse(getEmail));
       setValue("remember", JSON.parse(getRemember));
+    } else {
+      setValue("email", "demo@testTube.com");
+      setValue("password", "password");
     }
   }, [setValue]);
 

@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import mailService from "../config/mailService.js";
 import createHttpError from "http-errors";
+import pusher from "../config/notification.js";
 import Employee from "../models/employee.js";
 
 export const createEmployee = async (employee) => {
@@ -9,6 +10,15 @@ export const createEmployee = async (employee) => {
   employee.verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000;
   const employeeCreated = await employee.save();
   const verifyEmailLink = `${process.env.CLIENT_URL}/verify-email/${employeeCreated._id}/${employeeCreated.verificationToken}`;
+  //notify
+  pusher.trigger("employee-channel", "new-employee", {
+    employeeId: employeeCreated.employeeId,
+    message: `New employee created: ${employeeCreated.firstName.concat(
+      " ",
+      employeeCreated.lastName
+    )}`,
+  });
+ //send mail
   await mailService({
     from: process.env.EMAIL,
     to: employeeCreated.email,

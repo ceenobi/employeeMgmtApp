@@ -54,7 +54,7 @@ export default function Table({ filteredTasks }: TasksProps) {
       toast.success(fetcher.data?.msg);
       setIsOpenDelete(false);
       setIsOpen(false);
-      setSelectedTask(null)
+      setSelectedTask(null);
       navigate("/tasks", { replace: true });
     }
     if (fetcher.data?.error) {
@@ -152,26 +152,32 @@ export default function Table({ filteredTasks }: TasksProps) {
         case "asignees":
           return (
             <>
-              {task?.members.map((member: Userinfo) => (
-                <div
-                  className="flex flex-wrap items-center gap-2"
-                  key={member._id}
-                >
-                  {member?.photo && (
-                    <img
-                      src={member?.photo}
-                      alt={member?.firstName}
-                      className="w-8 h-8 rounded-full"
-                    />
-                  )}
-                  {!member?.photo && (
-                    <span>
-                      {member?.firstName.slice(0, 1) +
-                        (member?.lastName.slice(0, 1) || "")}
-                    </span>
-                  )}
-                </div>
-              ))}
+              {task?.members?.length > 0 ? (
+                <>
+                  {task?.members.map((member: Userinfo) => (
+                    <div
+                      className="flex flex-wrap items-center gap-2"
+                      key={member._id}
+                    >
+                      {member?.photo && (
+                        <img
+                          src={member?.photo}
+                          alt={member?.firstName}
+                          className="w-8 h-8 rounded-full"
+                        />
+                      )}
+                      {!member?.photo && (
+                        <span>
+                          {member?.firstName.slice(0, 1) +
+                            (member?.lastName.slice(0, 1) || "")}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <p>None</p>
+              )}
             </>
           );
         case "priority":

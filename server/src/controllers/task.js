@@ -3,6 +3,7 @@ import { validateTask } from "../utils/validators.js";
 import Task from "../models/task.js";
 import {
   createTaskService,
+  trackTaskStatus,
   updateTaskService,
 } from "../services/task.service.js";
 import tryCatch from "../utils/tryCatchFn.js";
@@ -35,10 +36,11 @@ export const getTasks = tryCatch(async (req, res, next) => {
   if (!tasks) {
     return next(createHttpError(404, "No tasks found"));
   }
+  const tasksWithStatus = await trackTaskStatus(tasks);
   const totalCount = await Task.countDocuments();
   res.status(200).json({
     success: true,
-    tasks,
+    tasks: tasksWithStatus,
     pagination: {
       currentPage: page,
       totalPages: Math.ceil(totalCount / limit),

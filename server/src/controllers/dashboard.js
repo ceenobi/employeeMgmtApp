@@ -4,6 +4,7 @@ import Payroll from "../models/payroll.js";
 import Leave from "../models/leave.js";
 import Event from "../models/event.js";
 import tryCatch from "../utils/tryCatchFn.js";
+import Notification from "../models/notifications.js";
 import dayjs from "dayjs";
 
 export const getDashboardData = tryCatch(async (req, res, next) => {
@@ -17,7 +18,9 @@ export const getDashboardData = tryCatch(async (req, res, next) => {
     ]);
 
   const employees = await Employee.find().sort({ createdAt: -1 });
-  const tasks = await Task.find().sort({ createdAt: -1 });
+  const tasks = await Task.find()
+    .populate("createdBy", "firstName lastName photo")
+    .sort({ createdAt: -1 });
   const leaves = await Leave.find().populate(
     "employee",
     "firstName lastName photo"
@@ -78,7 +81,9 @@ export const getDashboardData = tryCatch(async (req, res, next) => {
   //handle tasks
   const totalTasks = tasks.length;
   const pendingTasks = tasks.filter((task) => task.status === "pending").length;
-  const inprogressTasks = tasks.filter((task) => task.status === "inprogress").length;
+  const inprogressTasks = tasks.filter(
+    (task) => task.status === "inprogress"
+  ).length;
   const overdueTasks = tasks.filter(
     (task) => new Date(task.dueDate) < new Date()
   ).length;
@@ -278,7 +283,7 @@ export const getDashboardData = tryCatch(async (req, res, next) => {
         overdueTasks,
         tasksByPriority,
         completedTask,
-        inprogressTasks
+        inprogressTasks,
       },
       event: {
         events,
@@ -306,4 +311,14 @@ export const getDashboardData = tryCatch(async (req, res, next) => {
       },
     },
   });
+});
+
+export const getNotificationsData = tryCatch(async (req, res, next) => {
+  const notifications = await Notification.find().sort({ createdAt: -1 });
+  res.json(notifications);
+});
+
+export const deleteNotificationsData = tryCatch(async (req, res, next) => {
+  await Notification.deleteMany();
+  res.sendStatus(204);
 });

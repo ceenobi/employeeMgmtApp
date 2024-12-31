@@ -26,9 +26,13 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRETKEY,
   secure: true,
 });
-
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://emply-mgmt-app.vercel.app"],
+  origin: [
+    "http://localhost:5173",
+    "https://emply-mgmt-app.vercel.app",
+    "http://localhost:4100",
+    "http://192.168.0.135:4100",
+  ],
   optionsSuccessStatus: 200,
   methods: ["GET", "POST", "PATCH", "DELETE"],
   credentials: true,

@@ -42,6 +42,7 @@ const taskSchema = new Schema(
         "completed",
         "postponed",
         "cancelled",
+        "overdue",
       ],
       required: true,
     },

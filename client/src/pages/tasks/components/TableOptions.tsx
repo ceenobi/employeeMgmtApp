@@ -40,7 +40,7 @@ export default function TableOptions({
     }));
     // Remove duplicates based on the date
     const uniqueDueDates = Array.from(
-      new Map(dueDates.map((item) => [item.date, item])).values()
+      new Map(dueDates?.map((item) => [item.date, item])).values()
     );
     return uniqueDueDates;
   }, [tasks]);

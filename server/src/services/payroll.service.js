@@ -155,6 +155,16 @@ export const generatePayrollService = async (employeePayroll) => {
         payrollId,
       });
       const generatedPayroll = await payrolls.save();
+      pusher.trigger("payroll-channel", "new-payroll", {
+        payrollId: generatedPayroll._id,
+        message: `New payroll created: ${generatedPayroll.employeeId}`,
+      });
+      const notification = new Notification({
+        message: `New payroll created: ${generatedPayroll.employeeId}`,
+        type: "payroll",
+        notificationId: `payroll-${generatedPayroll._id}`,
+      });
+      await notification.save();
       // Populate user information
       generatedPayroll.userId = {
         _id: employee.userId._id,

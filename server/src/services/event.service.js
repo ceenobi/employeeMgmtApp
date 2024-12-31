@@ -3,6 +3,7 @@ import Employee from "../models/employee.js";
 import Event from "../models/event.js";
 import createHttpError from "http-errors";
 import dayjs from "dayjs";
+import Notification from "../models/notifications.js";
 
 export const createEventService = async (userId, req) => {
   const employee = await Employee.findById(userId);
@@ -22,6 +23,16 @@ export const createEventService = async (userId, req) => {
     photo: uploadResults?.url,
     photoId: uploadResults?.public_id,
   });
+  pusher.trigger("event-channel", "new-event", {
+    eventId: event._id,
+    message: `New event created: ${event.title}`,
+  });
+  const notification = new Notification({
+    message: `New event created: ${event.title}`,
+    type: "event",
+    notificationId: `event-${event._id}`,
+  });
+  await notification.save();
   await event.save();
   return event;
 };

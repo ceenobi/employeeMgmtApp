@@ -1,10 +1,11 @@
 import { Userinfo } from "@/emply-types";
 import { useAuthProvider } from "@/store/authProvider";
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useLocation, useSearchParams, useNavigate } from "react-router";
 import Drawer from "./Drawer";
 import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import Notification from "./Notification";
 
 export default function Nav() {
   const [searchParams] = useSearchParams();
@@ -17,7 +18,6 @@ export default function Nav() {
   const query = searchParams.get("query") || inputRef.current?.value || "";
   const [inputValue, setInputValue] = useState(query);
   const path = location.pathname.split("/")[1];
-  const unreadCount = 2;
 
   useEffect(() => {
     setInputValue(query);
@@ -77,23 +77,14 @@ export default function Nav() {
                 setInputValue(e.target.value);
                 handleSearch(e);
               }}
-              disabled={location.pathname === "/" || paths.some((path) =>
-                location.pathname.startsWith(path)
-              )}
+              disabled={
+                location.pathname === "/" ||
+                paths.some((path) => location.pathname.startsWith(path))
+              }
             />
           </label>
           <div className="flex gap-4 items-center">
-            <button
-              className="relative p-2 hover:bg-base-200 rounded-full transition-colors duration-200 bg-gray-700"
-              aria-label="Notifications"
-            >
-              <Bell />
-              {unreadCount > 0 && (
-                <span className="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-black transform translate-x-1/2 -translate-y-1/2 bg-success rounded-full">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
+            <Notification />
             <div className="flex gap-2 items-center">
               <div className="avatar placeholder">
                 <div className="bg-neutral text-neutral-content w-12 rounded-full">

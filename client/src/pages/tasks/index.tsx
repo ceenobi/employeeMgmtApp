@@ -32,7 +32,7 @@ export function Component() {
   const roles = ["admin", "super-admin"];
 
   const filteredTasks = useMemo(() => {
-    return tasks.filter((task) => {
+    return tasks?.filter((task) => {
       const matchesPriority = selectPriority
         ? task.priority === selectPriority
         : true;
@@ -74,7 +74,7 @@ export function Component() {
               setSelectPriority={setSelectPriority}
               setSelectProgress={setSelectProgress}
             />
-            {tasks.length > 0 ? (
+            {tasks?.length > 0 ? (
               <div className="flex flex-col min-h-[calc(100vh-220px)] justify-between">
                 <Suspense fallback={<div>Loading...</div>}>
                   <Table filteredTasks={filteredTasks} />

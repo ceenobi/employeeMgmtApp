@@ -625,6 +625,9 @@ export const taskStatus = [
   {
     value: "cancelled",
   },
+  {
+    value: "overdue",
+  },
 ];
 export const taskPriority = [
   { value: "low" },
@@ -640,6 +643,7 @@ export const taskStatusColors = {
   completed: "bg-green-200 text-green-800",
   postponed: "bg-secondary text-zinc-800",
   cancelled: "bg-red-200 text-red-800",
+  overdue: "bg-red-200 text-red-800",
 };
 
 export const taskPriorityColors = {
@@ -656,6 +660,7 @@ export const taskProgress = {
   completed: "100%",
   postponed: "0%",
   cancelled: "0%",
+  overdue: "100%",
 };
 
 export const taskProgressColors = {
@@ -666,6 +671,7 @@ export const taskProgressColors = {
   completed: "#065f46", // Green
   postponed: "#FFFF00", // Yellow
   cancelled: "#FF4500", // Orange Red
+  overdue: "#FF4500", // Orange Red
 };
 
 export const leaveType = [

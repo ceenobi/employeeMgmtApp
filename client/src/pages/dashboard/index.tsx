@@ -21,6 +21,7 @@ const Leaves = lazy(() => import("./components/Leaves"));
 const UpcomingEvents = lazy(() => import("./components/UpcomingEvents"));
 const Payroll = lazy(() => import("./components/Payroll"));
 const TaskInfo = lazy(() => import("./components/TaskInfo"));
+const TaskThisMonth = lazy(() => import("./components/TaskThisMonth"));
 
 export function Component() {
   const { user } = useAuthProvider() as {
@@ -129,6 +130,9 @@ export function Component() {
         <div className="px-2 mt-8">
           <div className="grid lg:grid-cols-12 gap-4">
             <div className="col-span-12 lg:col-span-8">
+              <Suspense fallback={<div>Loading...</div>}>
+                <TaskThisMonth getTasksThisMonth={getTasksThisMonth} />
+              </Suspense>
               <Suspense fallback={<div>Loading...</div>}>
                 <UpcomingEvents eventsThisMonth={getEventsThisMonth} />
               </Suspense>
