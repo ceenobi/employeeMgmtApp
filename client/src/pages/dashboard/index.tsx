@@ -94,10 +94,10 @@ export function Component() {
         <div className="mt-8 flex w-[95vw] md:w-full overflow-x-scroll md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 items-center px-2">
           <Suspense fallback={<div>Loading...</div>}>
             <InfoCard
-              title="Staff Strength"
+              title="Staff"
               count={employeeCount}
               icon={<UsersRound />}
-              desc={`${employeesPercentage.toFixed(0)}% hires for the month`}
+              desc={`${employeesPercentage?.toFixed(0)}% hires for the month`}
             />
           </Suspense>
           <Suspense fallback={<div>Loading...</div>}>
@@ -105,14 +105,14 @@ export function Component() {
               title="Events"
               count={getEventsThisMonth?.length}
               icon={<CalendarClock />}
-              desc={`${eventsPercentage.toFixed(0)}% events created this month`}
+              desc={`${eventsPercentage?.toFixed(0)}% events created this month`}
             />
           </Suspense>
           <Suspense fallback={<div>Loading...</div>}>
             <InfoCard
               title="Leaves"
               count={leaveCount}
-              desc={`${leavesPercentage.toFixed(
+              desc={`${leavesPercentage?.toFixed(
                 0
               )}% leaves approved this month`}
               icon={<Calendar />}
@@ -122,7 +122,7 @@ export function Component() {
             <InfoCard
               title="Tasks"
               count={getTasksThisMonth?.length}
-              desc={`${tasksPercentage.toFixed(0)}% tasks completed this month`}
+              desc={`${tasksPercentage?.toFixed(0)}% tasks completed this month`}
               icon={<ListChecks />}
             />
           </Suspense>
