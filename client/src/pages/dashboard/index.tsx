@@ -91,7 +91,7 @@ export function Component() {
             {user?.status === "other" && <PlugZap className="text-red-600" />}
           </div>
         </div>
-        <div className="mt-8 flex w-[95vw] md:w-full overflow-x-scroll md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 items-center px-2">
+        <div className="mt-8 flex w-[95vw] md:w-full overflow-x-scroll md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 items-center px-2">
           <Suspense fallback={<div>Loading...</div>}>
             <InfoCard
               title="Staff Strength"
@@ -128,8 +128,8 @@ export function Component() {
           </Suspense>
         </div>
         <div className="px-2 mt-8">
-          <div className="grid lg:grid-cols-12 gap-4">
-            <div className="col-span-12 lg:col-span-8">
+          <div className="lg:grid grid-cols-12 gap-4">
+            <div className="lg:col-span-8">
               <Suspense fallback={<div>Loading...</div>}>
                 <TaskThisMonth getTasksThisMonth={getTasksThisMonth} />
               </Suspense>
@@ -155,7 +155,7 @@ export function Component() {
                 />
               </Suspense>
             </div>
-            <div className="col-span-12 lg:col-span-4">
+            <div className="lg:col-span-4">
               <Suspense fallback={<div>Loading...</div>}>
                 <RecentHires recentEmployees={recentEmployees} />
               </Suspense>
