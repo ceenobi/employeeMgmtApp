@@ -47,7 +47,7 @@ export function Component() {
       setValue("email", JSON.parse(getEmail));
       setValue("remember", JSON.parse(getRemember));
     } else {
-      setValue("email", "demo@testTube.com");
+      setValue("email", "demo@testmail.com");
       setValue("password", "password");
     }
   }, [setValue]);

@@ -91,7 +91,7 @@ export default function Notification() {
               ))}
               <button
                 onClick={clearAllNotifications}
-                className="clear-notifications"
+                className="clear-notifications text-black text-sm hover:text-gray-600 px-2"
               >
                 Clear All
               </button>

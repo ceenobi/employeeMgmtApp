@@ -82,7 +82,7 @@ const employeeSchema = new Schema(
         "Utility",
         "Social media handler",
         "Head of Products",
-        "HR manager",
+        "HR Manager",
         "UI/UX designer",
         "Data analyst",
       ],
