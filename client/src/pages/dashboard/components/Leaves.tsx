@@ -27,7 +27,7 @@ export default function Leaves({
     <div className="bg-base-200 shadow-lg p-4 rounded-lg">
       <p>Recently approved leaves</p>
       {approvedLeaves?.slice(0, 3).map((leave: LeaveFormData) => (
-        <div className="my-4 flex items-center gap-2" key={leave._id}>
+        <div className="my-4 flex items-center gap-2" key={leave?._id}>
           <div className="avatar placeholder">
             <div className="bg-neutral text-neutral-content w-8 rounded-full">
               {leave?.employee?.photo && (

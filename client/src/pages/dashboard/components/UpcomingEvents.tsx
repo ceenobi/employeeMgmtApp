@@ -15,21 +15,21 @@ export default function UpcomingEvents({
       ) : (
         <>
           {eventsThisMonth?.slice(0, 10).map((event: EventFormData) => (
-            <div key={event._id}>
+            <div key={event?._id}>
               <div className="my-4">
                 <div className="flex justify-between items-center">
-                  <p className="text-gray-400">{event.title}</p>
+                  <p className="text-gray-400">{event?.title}</p>
                   <div
                     className={`badge font-bold ${
                       eventStatusColors[
-                        event.status as keyof typeof eventStatusColors
+                        event?.status as keyof typeof eventStatusColors
                       ]
                     }`}
                   >
-                    {event.status}
+                    {event?.status}
                   </div>
                 </div>
-                <p>{event.description}</p>
+                <p>{event?.description}</p>
                 <p className="text-sm mt-1">{renderDate(event)}</p>
               </div>
               <div className="divider"></div>

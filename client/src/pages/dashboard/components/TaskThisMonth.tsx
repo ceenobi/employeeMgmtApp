@@ -15,10 +15,10 @@ export default function TaskThisMonth({
       ) : (
         <>
           {getTasksThisMonth?.slice(0, 10).map((task: TaskFormData) => (
-            <div key={task._id}>
+            <div key={task?._id}>
               <div className="my-4">
                 <div className="flex justify-between items-center">
-                  <p className="text-gray-400">{task.title}</p>
+                  <p className="text-gray-400">{task?.title}</p>
                   <div
                     className={`${
                       task ? taskStatusColors[task?.status] : "bg-gray-200"
@@ -27,7 +27,7 @@ export default function TaskThisMonth({
                     {task ? task?.status : "No Status"}
                   </div>
                 </div>
-                <p>{task.description}</p>
+                <p>{task?.description}</p>
                 <div className="mt-1 flex gap-4">
                   <p className="text-sm text-gray-300">
                     Start Date: {formatDate(task?.startDate as Date)}

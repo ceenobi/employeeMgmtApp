@@ -34,9 +34,9 @@ export default function TaskInfo({
       <div className="divider"></div>
       <p className="mt-4">Tasks by Priority</p>
       <ul>
-        <li>Low: {tasksByPriority.low}</li>
-        <li>Medium: {tasksByPriority.medium}</li>
-        <li>High: {tasksByPriority.high}</li>
+        <li>Low: {tasksByPriority?.low}</li>
+        <li>Medium: {tasksByPriority?.medium}</li>
+        <li>High: {tasksByPriority?.high}</li>
       </ul>
       <div className="divider"></div>
       <div className="mt-4 flex flex-wrap justify-between items-center gap-4">

@@ -9,7 +9,7 @@ export default function RecentHires({
     <div className="bg-base-200 shadow-lg p-4 rounded-lg">
       <p>Most recent hires</p>
       {recentEmployees?.map((user: Userinfo) => (
-        <div className="my-6 flex items-center gap-2" key={user._id}>
+        <div className="my-6 flex items-center gap-2" key={user?._id}>
           <div className="avatar placeholder">
             <div className="bg-neutral text-neutral-content w-8 rounded-full">
               {user?.photo && <img src={user?.photo} alt={user?.firstName} />}
