@@ -54,7 +54,7 @@ export default function Payroll({
   const role = ["user","admin", "super-admin"];
   const payrollFrequency = "Monthly";
 
-  const chartDataGraph = chartData.map((trend) => ({
+  const chartDataGraph = chartData?.map((trend) => ({
     date: trend.date,
     netPay: trend.netPay,
   }));
@@ -173,7 +173,7 @@ export default function Payroll({
         </div>
         <div className="stat place-items-start w-[200px]">
           <div className="stat-title">Upcoming Payroll Dates</div>
-          {upcomingPayrollDates.map((item, index) => (
+          {upcomingPayrollDates?.map((item, index) => (
             <div className="text-secondary text-sm" key={index}>
               {item}
             </div>
@@ -184,21 +184,21 @@ export default function Payroll({
       <div>
         <h1 className="text-gray-400">Net Pay Distribution</h1>
         <div className="mt-4 flex flex-wrap gap-6">
-          {netPayDistributionPercentage.map((item) => (
-            <div key={item.department}>
+          {netPayDistributionPercentage?.map((item) => (
+            <div key={item?.department}>
               <div
                 className="radial-progress text-success"
                 style={
                   {
-                    "--value": Math.max(0, Math.min(100, item.percentage)),
+                    "--value": Math.max(0, Math.min(100, item?.percentage)),
                   } as React.CSSProperties
                 }
                 role="progressbar"
               ></div>
               <p className="text-sm text-center">
-                {item.percentage.toFixed(2)}%
+                {item?.percentage?.toFixed(2)}%
               </p>
-              <p className="text-sm text-center">{item.department}</p>
+              <p className="text-sm text-center">{item?.department}</p>
             </div>
           ))}
         </div>
