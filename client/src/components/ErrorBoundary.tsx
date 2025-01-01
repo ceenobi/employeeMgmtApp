@@ -5,7 +5,6 @@ import {
   useRouteError,
 } from "react-router";
 import ActionButton from "./ActionButton";
-import { useAuthProvider } from "@/store/authProvider";
 
 interface ErrorResponse {
   data?: string;
@@ -27,7 +26,6 @@ export default function ErrorBoundary() {
   const location = useLocation();
   const error = useRouteError() as RouteErrorResponse;
   console.error("Error object:", error);
-  const { isAuthenticated } = useAuthProvider();
 
   const errorMessage: string =
     error?.data ||
@@ -41,7 +39,7 @@ export default function ErrorBoundary() {
   const from = location.state?.from || "/";
 
   const redirect = () => {
-    if (errorMessage === "Session expired, pls login" && isAuthenticated) {
+    if (errorMessage === "Session expired, pls login") {
       navigate(0);
     }
     navigate(from, { replace: true });
