@@ -73,7 +73,7 @@ export function Component() {
       </Helmet>
       <div>
         <h2 className="text-center text-2xl font-bold">Welcome back</h2>
-        <p className="text-center">Let's get you signed in</p>
+        <p className="text-center mb-4">Let's get you signed in</p>
         <Form
           method="post"
           action="/login"
@@ -114,7 +114,7 @@ export function Component() {
                 Remember me
               </label>
             </div>
-            <Link to="/forgot-password" viewTransition>
+            <Link to="/forgot-password" viewTransition className="my-2">
               <button
                 type="button"
                 className="font-medium text-sm text-sky-300"

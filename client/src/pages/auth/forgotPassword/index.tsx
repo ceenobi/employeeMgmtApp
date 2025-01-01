@@ -47,7 +47,7 @@ export function Component() {
         <meta name="description" content="Get access to Emply" />
       </Helmet>
       <div>
-        <p className="text-center">
+        <p className="text-center mb-4">
           Enter your email, and we&apos;ll send you a link to get back into your
           account.
         </p>
