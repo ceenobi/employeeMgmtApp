@@ -6,7 +6,12 @@ export default function Auth() {
     <div className="flex justify-center items-center min-h-dvh bg-base-100">
       <div>
         <Link to="/" className="p-3">
-          <Fence className="mx-auto text-secondary" size={28} />
+          <Fence
+            className="mx-auto text-secondary"
+            size={28}
+            role="button"
+            aria-label="Home"
+          />
         </Link>
         <div className="card glass w-96">
           <div className="card-body">

@@ -127,7 +127,7 @@ export function Component() {
             text="Log in"
             type="submit"
             loading={isSubmitting}
-            classname="w-full btn-sm btn-secondary rounded-none"
+            classname="mt-4 w-full btn-sm btn-secondary rounded-none"
           />
           {error && <Alert error={error} />}
         </Form>

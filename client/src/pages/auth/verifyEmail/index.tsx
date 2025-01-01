@@ -66,7 +66,7 @@ export function Component() {
         <ActionButton
           text="Continue"
           type="button"
-          classname="w-full btn-sm btn-secondary rounded-none"
+          classname="mt-4 w-full btn-sm btn-secondary rounded-none"
           onClick={() => navigate(from, { replace: true })}
         />
       </div>
