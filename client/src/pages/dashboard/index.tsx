@@ -28,7 +28,7 @@ export function Component() {
     user: Userinfo;
   };
   const data = useRouteLoaderData("departments-employees");
-  const { stats } = data;
+  const { stats } = data || {};
   const { employee, leave, task, event, payroll } = stats?.data ?? {};
   const { employeeCount, recentEmployees, employeesPercentage } =
     employee ?? {};

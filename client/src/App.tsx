@@ -17,10 +17,8 @@ function App() {
     const authenticate = async () => {
       if (token) {
         await checkAuth(token);
-        await refreshToken(token as string);
       }
-      // if (token && !isAuthenticated) {
-      // }
+      await refreshToken(token as string);
       setLoading(false);
     };
 

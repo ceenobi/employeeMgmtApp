@@ -39,10 +39,11 @@ export default function ErrorBoundary() {
   const from = location.state?.from || "/";
 
   const redirect = () => {
-    if (errorMessage === "Session expired, pls login") {
+    if (errorMessage === "An unknown error has occured") {
       navigate(0);
+    } else {
+      navigate(from, { replace: true });
     }
-    navigate(from, { replace: true });
   };
 
   return (
