@@ -14,6 +14,7 @@ type authType = {
   isAuthenticated: boolean;
   error: unknown | null;
   logout: () => void;
+  loading: boolean;
   refreshToken: (token: string) => Promise<void> | void;
 };
 
@@ -21,6 +22,7 @@ const useAuthProvider = create<authType>((set) => ({
   user: null,
   isAuthenticated: false,
   error: null,
+  loading: false,
   checkAuth: async (token: string) => {
     if (!token) return;
     try {

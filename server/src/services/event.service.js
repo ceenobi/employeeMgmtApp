@@ -4,6 +4,7 @@ import Event from "../models/event.js";
 import createHttpError from "http-errors";
 import dayjs from "dayjs";
 import Notification from "../models/notifications.js";
+import pusher from "../config/notification.js";
 
 export const createEventService = async (userId, req) => {
   const employee = await Employee.findById(userId);
@@ -49,17 +50,18 @@ export const trackEventStatus = async (events) => {
       } else if (event.status === "postponed") {
         event.status = "postponed";
       } else if (
-        startDateObj.isSame(currentDate, 'day') || // Check if the start date is today
-        endDateObj.isSame(currentDate, 'day') ||   // Check if the end date is today
-        (startDateObj.isBefore(currentDate, 'day') && endDateObj.isAfter(currentDate, 'day')) // Ongoing if it started before today and ends after today
+        startDateObj.isSame(currentDate, "day") || // Check if the start date is today
+        endDateObj.isSame(currentDate, "day") || // Check if the end date is today
+        (startDateObj.isBefore(currentDate, "day") &&
+          endDateObj.isAfter(currentDate, "day")) // Ongoing if it started before today and ends after today
       ) {
         event.status = "ongoing";
       } else if (
-        startDateObj.isBefore(currentDate, 'day') &&
-        endDateObj.isBefore(currentDate, 'day')
+        startDateObj.isBefore(currentDate, "day") &&
+        endDateObj.isBefore(currentDate, "day")
       ) {
         event.status = "past";
-      } else if (endDateObj.isBefore(currentDate, 'day')) {
+      } else if (endDateObj.isBefore(currentDate, "day")) {
         event.status = "past";
       } else {
         event.status = "upcoming";

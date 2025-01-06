@@ -9,7 +9,7 @@ export const PrivateRoutes = ({ children }: { children: JSX.Element }) => {
   };
   const location = useLocation();
 
-  if (!isAuthenticated) {
+  if (user && !isAuthenticated) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
   if (user && !user?.isVerified) {
@@ -26,10 +26,10 @@ export const PrivateRoutes = ({ children }: { children: JSX.Element }) => {
 };
 
 export const PublicRoutes = ({ children }: { children: JSX.Element }) => {
-  const { isAuthenticated } = useAuthProvider();
+  const { user, isAuthenticated } = useAuthProvider();
   const location = useLocation();
   const from = location.state?.from || "/";
-  if (isAuthenticated) {
+  if (user && isAuthenticated) {
     return <Navigate to={from} replace />;
   }
 

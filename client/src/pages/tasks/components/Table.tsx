@@ -153,28 +153,28 @@ export default function Table({ filteredTasks }: TasksProps) {
           return (
             <>
               {task?.members?.length > 0 ? (
-                <>
-                  {task?.members.map((member: Userinfo) => (
+                <div className="avatar-group -space-x-4 rtl:space-x-reverse">
+                  {task?.members?.slice(0, 3).map((member: Userinfo) => (
                     <div
-                      className="flex flex-wrap items-center gap-2"
-                      key={member._id}
+                      className="avatar-group -space-x-4 rtl:space-x-reverse"
+                      key={member?._id}
                     >
-                      {member?.photo && (
-                        <img
-                          src={member?.photo}
-                          alt={member?.firstName}
-                          className="w-8 h-8 rounded-full"
-                        />
-                      )}
-                      {!member?.photo && (
-                        <span>
-                          {member?.firstName.slice(0, 1) +
-                            (member?.lastName.slice(0, 1) || "")}
-                        </span>
-                      )}
+                      <div className="avatar placeholder">
+                        <div className="bg-neutral text-neutral-content w-8 rounded-full">
+                          {member?.photo && (
+                            <img src={member?.photo} alt={member?.firstName} />
+                          )}
+                          {!member?.photo && (
+                            <span>
+                              {member?.firstName.slice(0, 1) +
+                                (member?.lastName.slice(0, 1) || "")}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   ))}
-                </>
+                </div>
               ) : (
                 <p>None</p>
               )}

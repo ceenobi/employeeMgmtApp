@@ -91,7 +91,7 @@ export default function Table({ leaves, user, roles }: TableLeaveProps) {
           ...formData,
           _id: selectedLeave?._id as string,
         },
-        { method: "patch" }
+        { method: "patch", action: "/leaves" }
       );
     },
     [fetcher, selectedLeave?._id]

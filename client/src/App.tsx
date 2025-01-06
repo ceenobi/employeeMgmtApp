@@ -1,29 +1,11 @@
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "sonner";
-import { useAuthProvider } from "./store/authProvider";
-import { useSaveToken } from "./store/stateProvider";
-import { useEffect, useState } from "react";
 import AppRoutes from "@/routes/Approutes";
 import { LazySpinner } from "./components";
+import { useAuthProvider } from "./store/authProvider";
 
 function App() {
-  const [loading, setLoading] = useState(true);
-  const { checkAuth, refreshToken, isAuthenticated } = useAuthProvider();
-  const { token } = useSaveToken((state) => state) as {
-    token: string | null;
-  };
-
-  useEffect(() => {
-    const authenticate = async () => {
-      if (token) {
-        await checkAuth(token);
-      }
-      await refreshToken(token as string);
-      setLoading(false);
-    };
-
-    authenticate();
-  }, [token, checkAuth, refreshToken, isAuthenticated]);
+  const { loading } = useAuthProvider();
 
   if (loading) {
     return <LazySpinner />;
