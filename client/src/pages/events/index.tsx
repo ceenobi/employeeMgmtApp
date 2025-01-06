@@ -55,7 +55,7 @@ export function Component() {
               selectStatus={selectStatus}
               setSelectStatus={setSelectStatus}
             />
-            {events.length > 0 ? (
+            {events?.length > 0 ? (
               <div className="flex flex-col min-h-[calc(100vh-220px)] justify-between">
                 <Suspense fallback={<div>Loading...</div>}>
                   <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-center">
