@@ -8,7 +8,7 @@ export const AuthProviderContext = ({ children }: { children: ReactNode }) => {
   const { token } = useSaveToken((state) => state) as {
     token: string | null;
   };
-  const { checkAuth, refreshToken } = useAuthProvider();
+  const { checkAuth, refreshToken, logout } = useAuthProvider();
 
   useEffect(() => {
     if (!token) {
@@ -20,6 +20,7 @@ export const AuthProviderContext = ({ children }: { children: ReactNode }) => {
         await checkAuth(token);
       } catch (error) {
         console.error("Error fetching user:", error);
+        logout();
       } finally {
         setLoading(false);
       }
@@ -27,7 +28,7 @@ export const AuthProviderContext = ({ children }: { children: ReactNode }) => {
 
     fetchUser();
     refreshToken(token);
-  }, [token, refreshToken, checkAuth]);
+  }, [token, refreshToken, checkAuth, logout]);
 
   const contextData = { loading };
   return (

@@ -1,5 +1,6 @@
 import { Userinfo } from "@/emply-types";
 import { useAuthProvider } from "@/store/authProvider";
+import { useSaveToken } from "@/store/stateProvider";
 import { Navigate, useLocation } from "react-router";
 
 export const PrivateRoutes = ({ children }: { children: JSX.Element }) => {
@@ -7,9 +8,10 @@ export const PrivateRoutes = ({ children }: { children: JSX.Element }) => {
     user: Userinfo;
     isAuthenticated: boolean;
   };
+  const { token } = useSaveToken((state) => state) as { token: string | null };
   const location = useLocation();
 
-  if (user && !isAuthenticated) {
+  if (!token && !isAuthenticated) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
   if (user && !user?.isVerified) {
@@ -26,10 +28,11 @@ export const PrivateRoutes = ({ children }: { children: JSX.Element }) => {
 };
 
 export const PublicRoutes = ({ children }: { children: JSX.Element }) => {
-  const { user, isAuthenticated } = useAuthProvider();
+  const { isAuthenticated } = useAuthProvider();
+  const { token } = useSaveToken((state) => state) as { token: string | null };
   const location = useLocation();
   const from = location.state?.from || "/";
-  if (user && isAuthenticated) {
+  if (token && isAuthenticated) {
     return <Navigate to={from} replace />;
   }
 
