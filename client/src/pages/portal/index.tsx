@@ -34,11 +34,16 @@ export function Component() {
     user: Userinfo;
   };
   const data = useLoaderData();
-  const { events, leaves, payrolls, tasks } = data?.data as {
+  const { events, leaves, payrolls, tasks } = (data?.data as {
     events: EventFormData[];
     leaves: LeaveFormData[];
     payrolls: PayrollFormData[];
     tasks: TaskFormData[];
+  }) || {
+    events: [],
+    leaves: [],
+    payrolls: [],
+    tasks: [],
   };
 
   return (
@@ -224,7 +229,9 @@ export function Component() {
                           <div className="flex justify-between items-center text-sm text-gray-400">
                             <p>Miscellaneous</p>
                             <p>
-                              {formatCurrency(payroll?.allowances?.miscellaneous)}
+                              {formatCurrency(
+                                payroll?.allowances?.miscellaneous
+                              )}
                             </p>
                           </div>
                           <p className="mt-4">Deductions</p>

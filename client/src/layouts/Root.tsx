@@ -1,20 +1,25 @@
 import { Nav, Sidebar } from "@/components";
 import { useToggleSidebar } from "@/store/stateProvider";
-import { Outlet, ScrollRestoration } from "react-router";
+import { Outlet, ScrollRestoration, useNavigation } from "react-router";
 
 export default function Root() {
   const { isOpenSideBar } = useToggleSidebar() as {
     isOpenSideBar: boolean;
   };
+  const navigation = useNavigation();
   return (
-    <div>
+    <>
       <Sidebar />
       <div
         className={`${
           isOpenSideBar ? "md:ml-[220px]" : "md:ml-[100px]"
         } flex-1`}
       >
-        <div className="max-w-[1280px] mx-auto">
+        <div
+          className={`max-w-[1280px] mx-auto ${
+            navigation.state === "loading" ? "loading" : ""
+          }`}
+        >
           <Nav />
           <main>
             <Outlet />
@@ -26,6 +31,6 @@ export default function Root() {
           />
         </div>
       </div>
-    </div>
+    </>
   );
 }
