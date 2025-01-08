@@ -1,5 +1,34 @@
 import Joi from "joi";
 
+export const validateEmployee = (employee) => {
+  const schema = Joi.object({
+    email: Joi.string().required(),
+    password: Joi.string().required(),
+    dept: Joi.string().required(),
+    role: Joi.string().required(),
+    jobType: Joi.string().required(),
+    jobTitle: Joi.string().required(),
+    photo: Joi.string().allow("").optional(),
+    photoId: Joi.string().allow("").optional(),
+    employeeId: Joi.string().required(),
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    gender: Joi.string().valid("male", "female", "other").required(),
+    bank: Joi.string().required(),
+    accountNumber: Joi.number().required(),
+    accountName: Joi.string().required(),
+    phone: Joi.string().required(),
+    dateOfBirth: Joi.date().required(),
+    address: Joi.object({
+      homeAddress: Joi.string().allow("").optional(),
+      state: Joi.string().allow("").optional(),
+      country: Joi.string().allow("").optional(),
+    }),
+  });
+
+  return schema.validate(employee);
+};
+
 export const validatePayroll = (payroll) => {
   const schema = Joi.object({
     employee: Joi.string().required(),

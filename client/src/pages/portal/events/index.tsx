@@ -22,6 +22,14 @@ export function Component() {
       hasMore: boolean;
       totalPages: number;
     };
+  } | {
+    events: [];
+    eventPagination: {
+      currentPage: number;
+      totalEvents: number;
+      hasMore: boolean;
+      totalPages: number;
+    };
   };
   const resetFilter = () => {
     setSelectStatus("");

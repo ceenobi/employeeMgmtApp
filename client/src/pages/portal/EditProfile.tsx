@@ -97,6 +97,7 @@ export function Component() {
     "accountNumber",
   ];
   const formFields2 = ["homeAddress", "state", "country"];
+  const roles = ["admin", "super-admin"];
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -149,6 +150,7 @@ export function Component() {
         <Form
           method="patch"
           action="/portal/edit-profile"
+          encType="multipart/form-data"
           onSubmit={handleSubmit(onFormSubmit)}
           className="flex flex-col min-h-[calc(100vh-200px)] justify-between"
         >
@@ -177,7 +179,7 @@ export function Component() {
                       errors={errors}
                       validate={(value) => validate(value) || undefined}
                       isRequired={isRequired}
-                      disabled
+                      disabled={!roles.includes(user?.role as string)}
                     />
                   )
                 )}
@@ -195,7 +197,7 @@ export function Component() {
                   validateField(value, "Job type is required")
                 }
                 isRequired
-                disabled
+                disabled={!roles.includes(user?.role as string)}
               />
               <SelectField
                 label="Job Title"
@@ -209,7 +211,7 @@ export function Component() {
                   validateField(value, "Job title is required")
                 }
                 isRequired
-                disabled
+                disabled={!roles.includes(user?.role as string)}
               />
               <SelectField
                 label="Department"
@@ -223,7 +225,7 @@ export function Component() {
                   validateField(value, "Please select a department")
                 }
                 isRequired
-                disabled
+                disabled={!roles.includes(user?.role as string)}
               />
               <SelectField
                 label="Role"
@@ -235,7 +237,7 @@ export function Component() {
                 options={employeeRole}
                 validate={(value) => validateField(value, "Role is required")}
                 isRequired
-                disabled
+                disabled={!roles.includes(user?.role as string)}
               />
               <SelectField
                 label="Marital Status"

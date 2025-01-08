@@ -125,13 +125,22 @@ export default function Table({ filteredTasks }: TasksProps) {
         case "createdBy":
           return (
             <div className="flex items-center gap-2">
-              {task?.createdBy?.photo && (
-                <img
-                  src={task?.createdBy?.photo}
-                  alt={task?.createdBy?.firstName}
-                  className="w-8 h-8 rounded-full"
-                />
-              )}
+              <div className="avatar placeholder">
+                <div className="bg-neutral text-neutral-content w-8 rounded-full">
+                  {task?.createdBy?.photo && (
+                    <img
+                      src={task?.createdBy?.photo}
+                      alt={task?.createdBy?.firstName}
+                    />
+                  )}
+                  {!task?.createdBy?.photo && (
+                    <span>
+                      {task?.createdBy?.firstName.slice(0, 1) +
+                        (task?.createdBy?.lastName.slice(0, 1) || "")}
+                    </span>
+                  )}
+                </div>
+              </div>
               {!task?.createdBy?.photo && (
                 <span>
                   {task?.createdBy?.firstName.slice(0, 1) +
@@ -188,19 +197,22 @@ export default function Table({ filteredTasks }: TasksProps) {
           );
         case "progress":
           return (
-            <div className="progress">
-              <div
-                className="progress-bar h-[20px]"
-                style={{
-                  width:
-                    taskProgress[task?.status as keyof typeof taskProgress],
-                  backgroundColor:
-                    taskProgressColors[
-                      task?.status as keyof typeof taskProgressColors
-                    ],
-                }}
-              ></div>
-            </div>
+            <>
+              <div className="progress">
+                <div
+                  className="progress-bar h-[20px]"
+                  style={{
+                    width:
+                      taskProgress[task?.status as keyof typeof taskProgress],
+                    backgroundColor:
+                      taskProgressColors[
+                        task?.status as keyof typeof taskProgressColors
+                      ],
+                  }}
+                ></div>
+              </div>
+              <p className="text-sm mt-1">{task?.status}</p>
+            </>
           );
         case "action":
           return (

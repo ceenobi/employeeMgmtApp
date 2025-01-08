@@ -1,6 +1,6 @@
 import {
   isRouteErrorResponse,
-  useLocation,
+  // useLocation,
   useNavigate,
   useRouteError,
 } from "react-router";
@@ -23,7 +23,7 @@ interface RouteErrorResponse extends ErrorResponse {
 
 export default function ErrorBoundary() {
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
   const error = useRouteError() as RouteErrorResponse;
   console.error("Error object:", error);
 
@@ -36,13 +36,13 @@ export default function ErrorBoundary() {
 
   console.log("Error message:", errorMessage);
 
-  const from = location.state?.from || "/";
+  // const from = location.state?.from || "/";
 
   const redirect = () => {
     if (errorMessage === "An unknown error has occured") {
       navigate(0);
     } else {
-      navigate(from, { replace: true });
+      navigate(-1);
     }
   };
 

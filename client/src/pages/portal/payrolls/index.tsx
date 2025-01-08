@@ -11,7 +11,7 @@ export function Component() {
     user: Userinfo;
   };
   const data = useRouteLoaderData("employee-summary");
-  const { payrolls, payrollsPagination} = data?.data as {
+  const { payrolls, payrollsPagination } = (data?.data as {
     payrolls: PayrollFormData[];
     payrollsPagination: {
       currentPage: number;
@@ -19,8 +19,16 @@ export function Component() {
       hasMore: boolean;
       totalPages: number;
     };
+  }) || {
+    payrolls: [],
+    payrollsPagination: {
+      currentPage: 1,
+      totalPayrolls: 0,
+      hasMore: false,
+      totalPages: 1,
+    },
   };
-  
+
   return (
     <>
       <Helmet>
@@ -34,8 +42,8 @@ export function Component() {
             <Table payrolls={payrolls} userInfo={user} />
           </Suspense>
           <Pagination
-            totalPages={payrollsPagination.totalPages}
-            count={payrollsPagination.totalPayrolls}
+            totalPages={payrollsPagination?.totalPages}
+            count={payrollsPagination?.totalPayrolls}
           />
         </div>
       ) : (

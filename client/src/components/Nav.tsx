@@ -57,8 +57,8 @@ export default function Nav() {
   const paths = ["/portal", "/departments", "/employees"];
 
   return (
-    <nav className="sticky top-0 z-40 bg-base-200 py-4 px-4 lg:px-6 border-b-2 border-b-gray-600">
-      <div className="flex justify-between items-center">
+    <nav className="sticky top-0 z-40 bg-base-200 py-4 px-4 lg:px-6 border-b-2 border-b-gray-600 w-full">
+      <div className="max-w-[1280px] mx-auto flex justify-between items-center">
         <div className="md:hidden">
           <Drawer />
         </div>
