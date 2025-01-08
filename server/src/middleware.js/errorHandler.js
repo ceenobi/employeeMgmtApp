@@ -44,8 +44,7 @@ export const errorHandler = (err, req, res, next) => {
   // Send response
   res.status(statusCode).json({
     success: false,
-    error:
-      process.env.NODE_ENV === "production" ? "An error occurred" : err.message,
+    error: process.env.NODE_ENV === "production" ? err.message : err.message,
     ...(process.env.NODE_ENV !== "production" && { stack: err.stack }),
   });
 };
