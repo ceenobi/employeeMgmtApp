@@ -6,7 +6,7 @@ import compression from "compression";
 import { v2 as cloudinary } from "cloudinary";
 import { createServer } from "http";
 import cookieParser from "cookie-parser";
-import { errorHandler, notFoundHandler } from "./middleware.js/errorHandler.js";
+import { notFoundHandler } from "./middleware.js/errorHandler.js";
 
 import authRoutes from "./routes/auth.js";
 import deptRoutes from "./routes/dept.js";
@@ -62,7 +62,7 @@ app.use("/api/dashboard", dashboardRoutes);
 
 app.use(notFoundHandler);
 // Handle all errors
-app.use(errorHandler);
+// app.use(errorHandler);
 
 app.use((error, req, res, next) => {
   console.error(error);
